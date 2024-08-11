@@ -1,0 +1,439 @@
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <string>
+
+#include "funciones.h"
+#include "funciones_template.h"
+
+struct Facturas {
+    int id;
+    std::string descripcion;
+    float monto;
+    // Sobrecarga del operador <<
+    friend std::ostream& operator<<(std::ostream& os, const Facturas& factura) {
+        os << "ID: " << factura.id << ", Descripción: " << factura.descripcion << ", Monto: " << factura.monto;
+        return os;
+    }
+};
+
+
+void Prueba1(std::fstream& archivo) {
+    std::vector<Facturas> facturas;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 1000; i++) {
+        facturas.push_back({i, "Factura de equipo", 500.0});
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> duration = end - start;
+    std::cout << duration.count() << std::endl;
+    escribirEnArchivo(archivo, facturas);  // Escribir el tiempo en el archivo
+    escribirEnArchivo(archivo, duration.count());  // Escribir el tiempo en el archivo
+}
+
+int main() {
+    std::fstream archivo;
+    std::string nombreArchivo = "tiempos.txt";
+    
+    if (!abrirArchivoEscritura(archivo, nombreArchivo,true)) {
+        std::cerr << "No se pudo abrir el archivo para escribir." << std::endl;
+        return 1;
+    }
+
+    for (int i = 0; i < 20; i++) {
+        Prueba1(archivo);
+    }
+
+    cerrarArchivo(archivo);
+    std::cout << "Listo";
+    std::cin.get();
+}
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <string>
+
+#include "funciones.h"
+// Función para abrir el archivo
+bool abrirArchivoEscritura(std::fstream& archivo, const std::string& nombreArchivo, bool tipo) {
+    if(tipo){
+    archivo.open(nombreArchivo, std::ios::out);
+    return archivo.is_open();
+    }else{
+        archivo.open(nombreArchivo, std::ios::in);
+    return archivo.is_open();
+    }
+}
+// Función para cerrar el archivo
+void cerrarArchivo(std::fstream& archivo) {
+    if (archivo.is_open()) {
+        archivo.close();
+    }
+}
+// Función para escribir en el archivo
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const T& dato) {
+    if (archivo.is_open()) {
+        archivo << dato << std::endl;
+    }
+}#ifndef FUNCIONES_H
+#define FUNCIONES_H
+
+#include <fstream>
+
+bool abrirArchivoEscritura(std::fstream& archivo, const std::string& nombreArchivo, bool tipo);
+void cerrarArchivo(std::fstream& archivo);
+#endif#ifndef TEMPLATE_FUNCS_H
+#define TEMPLATE_FUNCS_H
+
+#include <fstream>
+#include <iostream>
+
+// Declaración y definición de la función template
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const std::vector<T>& datos) {
+    if (archivo.is_open()) {
+        for (const auto& dato : datos) {
+            archivo << dato << std::endl;
+        }
+    }
+}
+
+
+#endif // TEMPLATE_FUNCS_H
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <string>
+
+#include "funciones.h"
+#include "funciones_template.h"
+
+struct Facturas {
+    int id;
+    std::string descripcion;
+    float monto;
+    // Sobrecarga del operador <<
+    friend std::ostream& operator<<(std::ostream& os, const Facturas& factura) {
+        os << "ID: " << factura.id << ", Descripción: " << factura.descripcion << ", Monto: " << factura.monto;
+        return os;
+    }
+};
+
+
+void Prueba1(std::fstream& archivo) {
+    std::vector<Facturas> facturas;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 10; i++) {
+        facturas.push_back({i, "Factura de equipo", 500.0});
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> duration = end - start;
+    std::cout << duration.count() << std::endl;
+    escribirEnArchivo(archivo, facturas);  // Escribir el tiempo en el archivo
+    escribirEnArchivo(archivo, duration.count());  // Escribir el tiempo en el archivo
+}
+
+int main() {
+    std::fstream archivo;
+    std::string nombreArchivo = "tiempos.txt";
+    
+    if (!abrirArchivoEscritura(archivo, nombreArchivo,true)) {
+        std::cerr << "No se pudo abrir el archivo para escribir." << std::endl;
+        return 1;
+    }
+
+    for (int i = 0; i < 20; i++) {
+        Prueba1(archivo);
+    }
+
+    cerrarArchivo(archivo);
+    std::cout << "Listo";
+    std::cin.get();
+    return 0;
+}
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <string>
+
+#include "funciones.h"
+// Función para abrir el archivo
+bool abrirArchivoEscritura(std::fstream& archivo, const std::string& nombreArchivo, bool tipo) {
+    if(tipo){
+    archivo.open(nombreArchivo, std::ios::out);
+    return archivo.is_open();
+    }else{
+        archivo.open(nombreArchivo, std::ios::in);
+    return archivo.is_open();
+    }
+}
+// Función para cerrar el archivo
+void cerrarArchivo(std::fstream& archivo) {
+    if (archivo.is_open()) {
+        archivo.close();
+    }
+}
+// Función para escribir en el archivo
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const T& dato) {
+    if (archivo.is_open()) {
+        archivo << dato << std::endl;
+    }
+}#ifndef FUNCIONES_H
+#define FUNCIONES_H
+
+#include <fstream>
+
+bool abrirArchivoEscritura(std::fstream& archivo, const std::string& nombreArchivo, bool tipo);
+void cerrarArchivo(std::fstream& archivo);
+#endif#ifndef TEMPLATE_FUNCS_H
+#define TEMPLATE_FUNCS_H
+
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+// Función template para manejar vectores
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const std::vector<T>& datos) {
+    if (archivo.is_open()) {
+        for (const auto& dato : datos) {
+            archivo << dato << std::endl;
+        }
+    }
+}
+
+// Función template para manejar tipos generales
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const T& dato) {
+    if (archivo.is_open()) {
+        archivo << dato << std::endl;
+    }
+}
+
+#endif // TEMPLATE_FUNCS_H
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <string>
+
+#include "funciones.h"
+#include "funciones_template.h"
+
+struct Facturas {
+    int id;
+    std::string descripcion;
+    float monto;
+    // Sobrecarga del operador <<
+    friend std::ostream& operator<<(std::ostream& os, const Facturas& factura) {
+        os << "ID: " << factura.id << ", Descripción: " << factura.descripcion << ", Monto: " << factura.monto;
+        return os;
+    }
+};
+
+
+void Prueba1(std::fstream& archivo) {
+    std::vector<Facturas> facturas;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 10; i++) {
+        facturas.push_back({i, "Factura de equipo", 500.0});
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> duration = end - start;
+    std::cout << duration.count() << std::endl;
+    escribirEnArchivo(archivo, facturas);  // Escribir el tiempo en el archivo
+    escribirEnArchivo(archivo, duration.count());  // Escribir el tiempo en el archivo
+}
+
+int main() {
+    std::fstream archivo;
+    std::string nombreArchivo = "tiempos.txt";
+    
+    if (!abrirArchivoEscritura(archivo, nombreArchivo,true)) {
+        std::cerr << "No se pudo abrir el archivo para escribir." << std::endl;
+        return 1;
+    }
+
+    for (int i = 0; i < 20; i++) {
+        Prueba1(archivo);
+    }
+
+    cerrarArchivo(archivo);
+    std::cout << "Listo";
+    std::cin.get();
+    return 0;
+}
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <string>
+
+#include "funciones.h"
+// Función para abrir el archivo
+bool abrirArchivoEscritura(std::fstream& archivo, const std::string& nombreArchivo, bool tipo) {
+    if(tipo){
+    archivo.open(nombreArchivo, std::ios::out);
+    return archivo.is_open();
+    }else{
+        archivo.open(nombreArchivo, std::ios::in);
+    return archivo.is_open();
+    }
+}
+// Función para cerrar el archivo
+void cerrarArchivo(std::fstream& archivo) {
+    if (archivo.is_open()) {
+        archivo.close();
+    }
+}
+// Función para escribir en el archivo
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const T& dato) {
+    if (archivo.is_open()) {
+        archivo << dato << std::endl;
+    }
+}#ifndef FUNCIONES_H
+#define FUNCIONES_H
+
+bool abrirArchivoEscritura(std::fstream& archivo, const std::string& nombreArchivo, bool tipo);
+void cerrarArchivo(std::fstream& archivo);
+#endif#ifndef TEMPLATE_FUNCS_H
+#define TEMPLATE_FUNCS_H
+
+#include <iostream>
+
+// Función template para manejar vectores
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const std::vector<T>& datos) {
+    if (archivo.is_open()) {
+        for (const auto& dato : datos) {
+            archivo << dato << std::endl;
+        }
+    }
+}
+
+// Función template para manejar tipos generales
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const T& dato) {
+    if (archivo.is_open()) {
+        archivo << dato << std::endl;
+    }
+}
+
+#endif // TEMPLATE_FUNCS_H
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <string>
+
+#include "funciones.h"
+#include "funciones_template.h"
+
+struct Facturas {
+    int id;
+    std::string descripcion;
+    float monto;
+    // Sobrecarga del operador <<
+    friend std::ostream& operator<<(std::ostream& os, const Facturas& factura) {
+        os << "ID: " << factura.id << ", Descripción: " << factura.descripcion << ", Monto: " << factura.monto;
+        return os;
+    }
+};
+
+
+void Prueba1(std::fstream& archivo) {
+    std::vector<Facturas> facturas;
+    auto start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < 10; i++) {
+        facturas.push_back({i, "Factura de equipo", 500.0});
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> duration = end - start;
+    std::cout << duration.count() << std::endl;
+    escribirEnArchivo(archivo, facturas);  // Escribir el tiempo en el archivo
+    escribirEnArchivo(archivo, duration.count());  // Escribir el tiempo en el archivo
+}
+
+int main() {
+    std::fstream archivo;
+    std::string nombreArchivo = "tiempos.txt";
+    
+    if (!abrirArchivoEscritura(archivo, nombreArchivo,true)) {
+        std::cerr << "No se pudo abrir el archivo para escribir." << std::endl;
+        return 1;
+    }
+
+    for (int i = 0; i < 20; i++) {
+        Prueba1(archivo);
+    }
+
+    cerrarArchivo(archivo);
+    std::cout << "Listo";
+    std::cin.get();
+    return 0;
+}
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <fstream>
+#include <string>
+
+#include "funciones.h"
+// Función para abrir el archivo
+bool abrirArchivoEscritura(std::fstream& archivo, const std::string& nombreArchivo, bool tipo) {
+    if(tipo){
+    archivo.open(nombreArchivo, std::ios::out);
+    return archivo.is_open();
+    }else{
+        archivo.open(nombreArchivo, std::ios::in);
+    return archivo.is_open();
+    }
+}
+// Función para cerrar el archivo
+void cerrarArchivo(std::fstream& archivo) {
+    if (archivo.is_open()) {
+        archivo.close();
+    }
+}
+// Función para escribir en el archivo
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const T& dato) {
+    if (archivo.is_open()) {
+        archivo << dato << std::endl;
+    }
+}#ifndef FUNCIONES_H
+#define FUNCIONES_H
+
+bool abrirArchivoEscritura(std::fstream& archivo, const std::string& nombreArchivo, bool tipo);
+void cerrarArchivo(std::fstream& archivo);
+#endif#ifndef TEMPLATE_FUNCS_H
+#define TEMPLATE_FUNCS_H
+
+#include <iostream>
+
+// Función template para manejar vectores
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const std::vector<T>& datos) {
+    if (archivo.is_open()) {
+        for (const auto& dato : datos) {
+            archivo << dato << std::endl;
+        }
+    }
+}
+
+// Función template para manejar tipos generales
+template<typename T>
+void escribirEnArchivo(std::fstream& archivo, const T& dato) {
+    if (archivo.is_open()) {
+        archivo << dato << std::endl;
+    }
+}
+
+#endif // TEMPLATE_FUNCS_H
