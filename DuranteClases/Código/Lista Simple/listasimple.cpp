@@ -26,8 +26,8 @@ void ListaSimple::insertarAlFinal(int _dato){
 Nodo * ListaSimple::eliminar(int _dato){
 	if (_dato == inicio->dato) {
 		Nodo * eliminado = inicio;
-		eliminado->siguiente = NULL;
 		inicio = inicio->siguiente;
+		eliminado->siguiente = NULL;
 		return eliminado;
 	}
 	else {
@@ -61,10 +61,14 @@ bool ListaSimple::estaVacia(){
 }
 
 void ListaSimple::imprimir(){
-	Nodo * tmp = inicio;
-	while (tmp != NULL){
-		std::cout << tmp->dato << " ";
-		tmp = tmp->siguiente;
+	if (!estaVacia()){
+		Nodo * tmp = inicio;
+		while (tmp != NULL){
+			std::cout << tmp->dato << " ";
+			tmp = tmp->siguiente;
+		}
+		std::cout << std::endl;
 	}
-	std::cout << std::endl;
+	else
+		std::cout << "No hay elementos" << std::endl;
 }
