@@ -1,4 +1,4 @@
-#include "Estudiante.h"
+#include "estudiante.h"
 #include <iostream>
 
 void Estudiante::imprimir() const {
