@@ -9,7 +9,7 @@ int main(){
 	// PRUEBAS
 	
 	ListaSimple * L1 = new ListaSimple();
-	Estudiante E1("Juan", "Perez", "Ingeniería", "01/01/2000");
+	Estudiante E1("Hector", "Perez", "Ingeniería", "01/01/2000");
     Estudiante E2("Maria", "Gomez", "Medicina", "02/02/1999");
     Estudiante E3("Luis", "Ramirez", "Derecho", "03/03/1998");
     Estudiante E4("Ana", "Martinez", "Arquitectura", "04/04/1997");
