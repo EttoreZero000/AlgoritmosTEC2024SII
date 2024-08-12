@@ -13,11 +13,11 @@ public:
 	}
 
 	// Metodos
-	void insertarAlInicio(int _dato);
-	void insertarAlFinal(int _dato);
-	Nodo * buscar(int _dato);
-	Nodo * eliminar(int _dato);
-	bool estaVacia();
-	void imprimir();
+	void insertarAlInicio(Estudiante _dato);
+    void insertarAlFinal(Estudiante _dato);
+    Nodo *buscar(Estudiante _dato);
+    Nodo *eliminar(Estudiante _dato);
+    bool estaVacia();
+    void imprimir();
 };
 

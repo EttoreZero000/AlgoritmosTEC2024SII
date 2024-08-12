@@ -1,7 +1,7 @@
 #include <iostream>
 #include "listasimple.h"
 
-void ListaSimple::insertarAlInicio(int _dato){
+void ListaSimple::insertarAlInicio(Estudiante _dato){
 	if (inicio == NULL)
 		inicio = new Nodo(_dato);
 	else {
@@ -11,7 +11,7 @@ void ListaSimple::insertarAlInicio(int _dato){
 	}
 }
 
-void ListaSimple::insertarAlFinal(int _dato){
+void ListaSimple::insertarAlFinal(Estudiante _dato){
 	if (inicio == NULL)
 		inicio = new Nodo(_dato);
 	else {
@@ -23,8 +23,8 @@ void ListaSimple::insertarAlFinal(int _dato){
 	}
 }
 
-Nodo * ListaSimple::eliminar(int _dato){
-	if (_dato == inicio->dato) {
+Nodo * ListaSimple::eliminar(Estudiante _dato){
+	if (_dato.nombre == inicio->dato.nombre) {
 		Nodo * eliminado = inicio;
 		inicio = inicio->siguiente;
 		eliminado->siguiente = NULL;
@@ -34,7 +34,7 @@ Nodo * ListaSimple::eliminar(int _dato){
 		Nodo * nodo_anterior = inicio;
 		Nodo * tmp = inicio;
 		while (tmp != NULL){
-			if (tmp->dato == _dato){
+			if (tmp->dato.nombre == _dato.nombre){
 				nodo_anterior->siguiente = tmp->siguiente;
 				tmp->siguiente = NULL;
 				return tmp;
@@ -46,10 +46,10 @@ Nodo * ListaSimple::eliminar(int _dato){
 	}
 }
 
-Nodo * ListaSimple::buscar(int _dato){
+Nodo * ListaSimple::buscar(Estudiante _dato){
 	Nodo * tmp = inicio;
 	while (tmp != NULL){
-		if (tmp->dato == _dato)
+		if (tmp->dato.nombre == _dato.nombre)
 			return tmp;
 		tmp = tmp->siguiente;
 	}
@@ -64,7 +64,7 @@ void ListaSimple::imprimir(){
 	if (!estaVacia()){
 		Nodo * tmp = inicio;
 		while (tmp != NULL){
-			std::cout << tmp->dato << " ";
+			tmp->dato.imprimir();
 			tmp = tmp->siguiente;
 		}
 		std::cout << std::endl;
