@@ -11,9 +11,9 @@ public:
     std::string fechaNacimiento;
 
     // Constructor
+    Estudiante() {}
     Estudiante(std::string _nombre, std::string _apellido, std::string _carrera, std::string _fechaNacimiento)
         : nombre(_nombre), apellido(_apellido), carrera(_carrera), fechaNacimiento(_fechaNacimiento) {}
-
     // Método para mostrar la información del estudiante
     void imprimir() const;
 };

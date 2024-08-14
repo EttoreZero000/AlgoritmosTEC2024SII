@@ -6,11 +6,7 @@ public:
 	Estudiante dato;
 	Nodo * siguiente;
 
-	// Constructores
-	//Nodo(){
-	//	dato = 0;
-	//	siguiente = NULL;
-	//}
+	//Nodo() : dato(new Estudiante()), siguiente(NULL) {}
 
 	Nodo(Estudiante _dato) : dato(_dato), siguiente(NULL) {}
 
