@@ -5,7 +5,9 @@ public:
 	// Atributos
 	Estudiante dato;
 	Nodo * siguiente;
-	// Constructor por defecto
+
+
+	Nodo() : dato(Estudiante()), siguiente(NULL) {}
 
 	Nodo(Estudiante _dato) : dato(_dato), siguiente(NULL) {}
 
