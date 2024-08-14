@@ -3,23 +3,20 @@
 #include "listasimple.h"
 #include "listadoble.h"
 #include "listacircular.h"
-
 int main(){
-
-	// PRUEBAS
 	
 	ListaSimple * L1 = new ListaSimple();
-	Estudiante E1("Hector", "Perez", "Ingeniería", "01/01/2000");
-    Estudiante E2("Maria", "Gomez", "Medicina", "02/02/1999");
-    Estudiante E3("Luis", "Ramirez", "Derecho", "03/03/1998");
-    Estudiante E4("Ana", "Martinez", "Arquitectura", "04/04/1997");
+	Estudiante E1("Hector", "David", "Mecatronica", "01/01/2000");
+	Estudiante E2("Juan", "Gomez", "Electro", "02/02/1999");
+	Estudiante E3("Luis", "Ramirez", "Derecho", "03/03/1998");
+	Estudiante E4("Ana", "Martinez", "Arquitectura", "04/04/1997");
 
 	L1->insertarAlInicio(E1);
     L1->insertarAlInicio(E2);
     L1->insertarAlInicio(E3);
 
 	// 4 3 2 1
-
+	std::cout << "Puto";
 	L1->imprimir();
 
 	L1->insertarAlFinal(E4);
@@ -66,4 +63,3 @@ int main(){
 
 	return 0;
 }
-
