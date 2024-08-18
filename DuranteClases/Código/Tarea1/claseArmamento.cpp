@@ -56,10 +56,10 @@ Armamento::Armamento(const std::string& nombre, ListaSimple<bool>* listaAtributo
 }
 
 // Destructor
-Armamento::~Armamento() {
-    delete listaAtributos;
-    delete listaModificadores;
-}
+//Armamento::~Armamento() {
+//    delete listaAtributos;
+//    delete listaModificadores;
+//}
 
 void Armamento::imprimir() const {
     std::cout << "ID: " << id << std::endl;
@@ -74,4 +74,9 @@ void Armamento::imprimir() const {
 
     std::cout << "Lista de Modificadores (int): ";
     listaModificadores->imprimir();  // Asume que la clase `ListaSimple` tiene una función `imprimir()`
+}
+
+std::ostream& operator<<(std::ostream& os, const Armamento& armamento) {
+    armamento.imprimir();
+    return os;
 }

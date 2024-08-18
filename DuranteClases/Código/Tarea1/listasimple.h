@@ -4,11 +4,12 @@
 #include "Nodo.h"
 #include <iostream>
 
+
 template <typename T>
 class ListaSimple {
 public:
     ListaSimple();
-    ~ListaSimple();
+    //~ListaSimple();
 
     void insertarAlInicio(T dato);
     void insertarAlFinal(T dato);

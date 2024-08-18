@@ -17,11 +17,12 @@ int main() {
     Armamento miArmamento("Espada Mágica", atributos, 5, 2, 3, modificadores);
 
     // Imprimir el objeto
-    miArmamento.imprimir();
+    // miArmamento.imprimir();
 
-    // Limpiar memoria
-    delete atributos;
-    delete modificadores;
+    ListaSimple<Armamento> listaArmamento;
+    listaArmamento.insertarAlInicio(miArmamento);
+    listaArmamento.insertarAlInicio(miArmamento);
+    listaArmamento.imprimir();
 
     return 0;
 }

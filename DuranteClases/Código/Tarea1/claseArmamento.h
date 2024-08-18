@@ -22,19 +22,18 @@ public:
     Armamento(const std::string& nombre, ListaSimple<bool>* listaAtributos, int usos, int tipo, int disponibles, ListaSimple<int>* listaModificadores);
 
     // Destructor
-    ~Armamento();
+    //~Armamento();
 
     // Métodos estáticos para manejar el archivo de ID
     static void loadNextId();
     static void saveNextId();
 
     // Método para obtener una representación en cadena del objeto
-    std::string toString() const;
     void imprimir() const;
 
 private:
     static int nextId; // Variable estática para generar IDs automáticamente
     static const std::string idFileName; // Nombre del archivo donde se guarda el ID
 };
-
+std::ostream& operator<<(std::ostream& os, const Armamento& armamento);
 #endif // ARMAMENTO_H

@@ -3,15 +3,15 @@
 template <typename T>
 ListaSimple<T>::ListaSimple() : cabeza(nullptr) {}
 
-template <typename T>
-ListaSimple<T>::~ListaSimple() {
-    Nodo<T>* actual = cabeza;
-    while (actual != nullptr) {
-        Nodo<T>* siguiente = actual->siguiente;
-        delete actual;
-        actual = siguiente;
-    }
-}
+//template <typename T>
+//ListaSimple<T>::~ListaSimple() {
+//    Nodo<T>* actual = cabeza;
+//    while (actual != nullptr) {
+//        Nodo<T>* siguiente = actual->siguiente;
+//        delete actual;
+//        actual = siguiente;
+//    }
+//}
 
 template <typename T>
 void ListaSimple<T>::insertarAlInicio(T dato) {
@@ -72,7 +72,7 @@ template <typename T>
 void ListaSimple<T>::imprimir() const {
     Nodo<T>* actual = cabeza;
     while (actual != nullptr) {
-        std::cout << actual->dato << " ";
+        std::cout << actual->dato << " ";  // Usa el operador <<
         actual = actual->siguiente;
     }
     std::cout << std::endl;
