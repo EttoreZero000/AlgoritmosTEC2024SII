@@ -4,10 +4,10 @@
 template <typename T>
 class Nodo {
 public:
-    T dato; // Dato del nodo
-    Nodo* siguiente; // Puntero al siguiente nodo
+    T dato;
+    Nodo* siguiente;
 
-    Nodo(T d, Nodo* s = nullptr) : dato(d), siguiente(s) {}
+    Nodo(T _dato) : dato(_dato), siguiente(nullptr) {}
 };
 
 #endif // NODO_H

@@ -1,29 +1,25 @@
 #include "listasimple.h"
 
 template <typename T>
-ListaSimple<T>::ListaSimple() : cabeza(nullptr) {}
-
-//template <typename T>
-//ListaSimple<T>::~ListaSimple() {
-//    Nodo<T>* actual = cabeza;
-//    while (actual != nullptr) {
-//        Nodo<T>* siguiente = actual->siguiente;
-//        delete actual;
-//        actual = siguiente;
-//    }
-//}
+ListaSimple<T>::ListaSimple() : inicio(nullptr) {}
 
 template <typename T>
-void ListaSimple<T>::insertarAlInicio(T dato) {
-    cabeza = new Nodo<T>(dato, cabeza);
+void ListaSimple<T>::insertarAlInicio(T _dato) {
+    if (inicio == nullptr)
+        inicio = new Nodo<T>(_dato);
+    else {
+        Nodo<T>* nuevo = new Nodo<T>(_dato);
+        nuevo->siguiente = inicio;
+        inicio = nuevo;
+    }
 }
 
 template <typename T>
 void ListaSimple<T>::insertarAlFinal(T dato) {
-    if (cabeza == nullptr) {
-        cabeza = new Nodo<T>(dato);
+    if (inicio == nullptr) {
+        inicio = new Nodo<T>(dato);
     } else {
-        Nodo<T>* actual = cabeza;
+        Nodo<T>* actual = inicio;
         while (actual->siguiente != nullptr) {
             actual = actual->siguiente;
         }
@@ -33,7 +29,7 @@ void ListaSimple<T>::insertarAlFinal(T dato) {
 
 template <typename T>
 Nodo<T>* ListaSimple<T>::buscar(T dato) {
-    Nodo<T>* actual = cabeza;
+    Nodo<T>* actual = inicio;
     while (actual != nullptr) {
         if (actual->dato == dato) {
             return actual;
@@ -45,7 +41,7 @@ Nodo<T>* ListaSimple<T>::buscar(T dato) {
 
 template <typename T>
 Nodo<T>* ListaSimple<T>::eliminar(T dato) {
-    Nodo<T>* actual = cabeza;
+    Nodo<T>* actual = inicio;
     Nodo<T>* anterior = nullptr;
     while (actual != nullptr && actual->dato != dato) {
         anterior = actual;
@@ -55,22 +51,22 @@ Nodo<T>* ListaSimple<T>::eliminar(T dato) {
         return nullptr; // No se encontró el dato
     }
     if (anterior == nullptr) {
-        cabeza = actual->siguiente;
+        inicio = actual->siguiente;
     } else {
         anterior->siguiente = actual->siguiente;
     }
     delete actual;
-    return cabeza;
+    return inicio;
 }
 
 template <typename T>
 bool ListaSimple<T>::estaVacia() const {
-    return cabeza == nullptr;
+    return inicio == nullptr;
 }
 
 template <typename T>
 void ListaSimple<T>::imprimir() const {
-    Nodo<T>* actual = cabeza;
+    Nodo<T>* actual = inicio;
     while (actual != nullptr) {
         std::cout << actual->dato << " ";  // Usa el operador <<
         actual = actual->siguiente;
