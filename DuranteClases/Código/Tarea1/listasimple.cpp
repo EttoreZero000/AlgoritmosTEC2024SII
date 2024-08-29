@@ -28,10 +28,10 @@ void ListaSimple<T>::insertarAlFinal(T dato) {
 }
 
 template <typename T>
-Nodo<T>* ListaSimple<T>::buscar(T dato) {
+Nodo<T>* ListaSimple<T>::buscar(int id) {
     Nodo<T>* actual = inicio;
     while (actual != nullptr) {
-        if (actual->dato == dato) {
+        if (actual->dato.getId() == id) {
             return actual;
         }
         actual = actual->siguiente;

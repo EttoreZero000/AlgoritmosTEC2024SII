@@ -4,31 +4,33 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include "listasimple.h"
 
 class Armamento {
 public:
     int id;
     std::string nombre;
-    std::vector<int> listaAtributos; // Cambio a std::vector<int>
+    ListaSimple<int> listaAtributos;
     int usos;
     int tipo;
     int disponibles;
-    std::vector<int> listaModificadores;
+    ListaSimple<int> listaModificadores;
 
     // Constructor por defecto
     Armamento();
 
     // Constructor completo (sin ID)
-    Armamento(const std::string& nombre, const std::vector<int>& listaAtributos, int usos, int tipo, int disponibles, const std::vector<int>& listaModificadores);
+    Armamento(const std::string& nombre, const ListaSimple<int>& listaAtributos, int usos, int tipo, int disponibles, const ListaSimple<int>& listaModificadores);
 
     // Constructor con ID
-    Armamento(int id, const std::string& nombre, const std::vector<int>& listaAtributos, int usos, int tipo, int disponibles, const std::vector<int>& listaModificadores);
-
+    Armamento(int id, const std::string& nombre, const ListaSimple<int>& listaAtributos, int usos, int tipo, int disponibles, const ListaSimple<int>& listaModificadores);
     // Métodos estáticos para manejar el archivo de ID
     static void loadNextId();
     static void saveNextId();
-
-    // Método para obtener una representación en cadena del objeto
+    //Metodos varios
+    int getId();
+    void setAtributos(ListaSimple<int> listaAtributos);
+    void setModificadores(ListaSimple<int> listaModificadores);
     void imprimir() const;
 
 private:

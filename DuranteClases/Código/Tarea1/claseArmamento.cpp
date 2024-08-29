@@ -38,7 +38,7 @@ Armamento::Armamento()
 }
 
 // Constructor completo (sin ID)
-Armamento::Armamento(const std::string& nombre, const std::vector<int>& listaAtributos, int usos, int tipo, int disponibles, const std::vector<int>& listaModificadores)
+Armamento::Armamento(const std::string& nombre, const ListaSimple<int>& listaAtributos, int usos, int tipo, int disponibles, const ListaSimple<int>& listaModificadores)
     : id(nextId++),
       nombre(nombre),
       listaAtributos(listaAtributos),
@@ -51,7 +51,7 @@ Armamento::Armamento(const std::string& nombre, const std::vector<int>& listaAtr
 }
 
 // Constructor con ID
-Armamento::Armamento(int id, const std::string& nombre, const std::vector<int>& listaAtributos, int usos, int tipo, int disponibles, const std::vector<int>& listaModificadores)
+Armamento::Armamento(int id, const std::string& nombre, const ListaSimple<int>& listaAtributos, int usos, int tipo, int disponibles, const ListaSimple<int>& listaModificadores)
     : id(id),
       nombre(nombre),
       listaAtributos(listaAtributos),
@@ -62,24 +62,38 @@ Armamento::Armamento(int id, const std::string& nombre, const std::vector<int>& 
 {
     // No incrementamos nextId, ya que se pasa un ID específico
 }
-
+int Armamento::getId(){
+    return id;    
+}
+void Armamento::setAtributos(ListaSimple<int> _listaAtributos){
+    listaAtributos=_listaAtributos;
+}
+void Armamento::setModificadores(ListaSimple<int> _listaModificadores){
+    listaModificadores=_listaModificadores;
+}
 void Armamento::imprimir() const {
-    std::cout << "ID: " << id << std::endl;
-    std::cout << "Nombre: " << nombre << std::endl;
+    std::cout << "------------------------------------" << std::endl;
+    std::string nombresAtributos[] = {"Oscuridad", "Viento", "Agua", "Tierra", "Fuego", "Luz"};
+    std::string nombresModificadores[] = {"Magia", "Fuerza", "Daño", "Agilidad", "Peso", "Tiro"};
+    std::string nombresTipos[] = {"Lanza", "Espada", "Varita", "Maza", "Arco", "Hacha"};
 
-    std::cout << "Lista de Atributos (int): ";
-    for (int atributo : listaAtributos) {
-        std::cout << atributo << " ";
+    std::cout << "ID: " << id << ", Nombre: " << nombre << ", Tipo: " << nombresTipos[tipo-1] <<", Usos: " << usos << ", Disponibles: " << disponibles << std::endl;
+    
+    std::cout << "Atributos: ";
+    Nodo<int>* actualAtributo = listaAtributos.getInicio();  // Método getInicio() debe retornar el primer nodo de la lista
+    for (int i = 0; actualAtributo != nullptr && i < 6; ++i) {
+        if (actualAtributo->dato == 1) {
+            std::cout << nombresAtributos[i] << " ";
+        }
+        actualAtributo = actualAtributo->siguiente;
     }
+    
     std::cout << std::endl;
-
-    std::cout << "Usos: " << usos << std::endl;
-    std::cout << "Tipo: " << tipo << std::endl;
-    std::cout << "Disponibles: " << disponibles << std::endl;
-
-    std::cout << "Lista de Modificadores (int): ";
-    for (int modificador : listaModificadores) {
-        std::cout << modificador << " ";
+    std::cout << "Modificadores: ";
+    Nodo<int>* actualModificador = listaModificadores.getInicio();
+    for (int i = 0; actualModificador != nullptr && i < 6; ++i) {
+        std::cout << nombresModificadores[i] << ": " << actualModificador->dato<< ", ";
+        actualModificador=actualModificador->siguiente;
     }
     std::cout << std::endl;
 }

@@ -4,25 +4,25 @@
 
 #include "Nodo.h"
 #include <iostream>
+#include "vehiculo.h"
 
 template <typename T>
-class ListaSimple {
+class pilaSimple {
 public:
-    ListaSimple();
+    pilaSimple();
 
     void insertarAlInicio(T dato);
     void insertarAlFinal(T dato);
-    Nodo<T>* buscar(int dato);
     Nodo<T>* eliminar(T dato);
     bool estaVacia() const;
     void imprimir() const;
-    Nodo<T>* getInicio() const { return inicio; }
 
 private:
     Nodo<T>* inicio; // Puntero al primer nodo
 };
 
 // Aquí incluimos la implementación
-#include "listasimple.cpp"
+#include "pila.cpp"
+#include "vehiculo.cpp"
 
 #endif // LISTASIMPLE_H
