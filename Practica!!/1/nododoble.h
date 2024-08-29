@@ -1,27 +1,14 @@
-#include <cstdlib>
+#ifndef NODODOBLE_H
+#define NODODOBLE_H
 
-class NodoDoble {
-public:
-	// Atributos
-	int dato;
-	NodoDoble * siguiente, * anterior;
+#include "juguete.h"
 
-	// Constructores
-	NodoDoble(){
-		dato = 0;
-		siguiente = anterior = NULL;
-	}
+struct NodoDoble {
+    Juguete dato;
+    NodoDoble* siguiente;
+    NodoDoble* anterior;
 
-	NodoDoble(int _dato){
-		dato = _dato;
-		siguiente = anterior = NULL;
-	}
-
-	NodoDoble(int _dato, NodoDoble * _siguiente, NodoDoble * _anterior){
-		dato = _dato;
-		siguiente = _siguiente;
-		anterior = _anterior;
-	}
+    NodoDoble(const Juguete& juguete) : dato(juguete), siguiente(nullptr), anterior(nullptr) {}
 };
 
-
+#endif
