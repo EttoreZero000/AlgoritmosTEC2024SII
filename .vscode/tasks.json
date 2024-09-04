@@ -3,13 +3,12 @@
         {
             "type": "cppbuild",
             "label": "C/C++: g++.exe compilar archivo activo",
-            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
+            "command": "g++",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "test",
+                "${fileDirname}/main.cpp",
+                "${fileDirname}/clase.cpp"
             ],
             "options": {
                 "cwd": "${fileDirname}"
