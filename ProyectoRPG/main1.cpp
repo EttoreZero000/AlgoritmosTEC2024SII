@@ -37,13 +37,7 @@ void printCentered(string text, int y, COORD consoleSize) {
     cout << text;
 }
 
-int main() {
-    string title = "Mi Videojuego";
-    string options[3] = {"Partida Nueva", "Cargar Partida", "Salir"};
-    int selectedOption = 0; // Opción seleccionada actualmente
-    COORD consoleSize;
-    hideCursor();
-    // Ciclo del menú
+void menu(string title, std::string (&options)[3], int selectedOption, COORD consoleSize){
     while (true) {
         // Obtener el tamaño actual de la consola
         consoleSize = getConsoleSize();
@@ -75,9 +69,10 @@ int main() {
                 selectedOption++;
                 if (selectedOption > 2) selectedOption = 0; // Volver al inicio
             } else if (key == 13) { // Tecla Enter
+                //return selectedOption;
                 system("cls");
                 printCentered("Opcion seleccionada: " + options[selectedOption], consoleSize.Y / 2, consoleSize);
-                printCentered("11111111111111111111111111111111111111111111111111111111111111111111111111111111", consoleSize.Y / 2, consoleSize);
+                printCentered("Puto el que lo lea", consoleSize.Y / 2 + 1, consoleSize);
                 break; // Salir del ciclo al seleccionar una opción
             }
         }
@@ -85,5 +80,16 @@ int main() {
         // Pausa breve para evitar alto uso de CPU
         this_thread::sleep_for(chrono::milliseconds(50));
     }
+}
+
+int main() {
+    string title = "Heroes y Mazmorras";
+    string options[3] = {"Partida Nueva", "Cargar Partida", "Salir"};
+    int selectedOption = 0; // Opción seleccionada actualmente
+    COORD consoleSize;
+    hideCursor();
+    // Ciclo del menú
+    menu(title, options, selectedOption, consoleSize);
+    std::cin.get();
     return 0;
 }
