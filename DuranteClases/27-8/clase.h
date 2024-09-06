@@ -1,5 +1,6 @@
-#ifndef DISPOSITIVO_H
-#define DISPOSITIVO_H
+// clase.h
+#ifndef CLASE_H
+#define CLASE_H
 
 #include <string>
 
@@ -9,23 +10,21 @@ private:
     char Tipo;
     char Estado;
     int Pureza;
+
+    static int contadorID; // Contador estático para generar IDs únicos
+
 public:
-    // Constructor por defecto
-    Dispositivo();
-    // Constructor completo (sin ID)
     Dispositivo(std::string ID, char Tipo, char Estado, int Pureza);
-    // Métodos set
-    void setID(std::string ID);
-    void setTipo(char Tipo);
-    void setEstado(char Estado);
-    void setPureza(int Pureza);
-    //Metodos get
+    void setID(std::string _ID);
+    void setTipo(char _Tipo);
+    void setEstado(char _Estado);
+    void setPureza(int _Pureza);
     std::string getID();
     char getTipo();
     char getEstado();
     int getPureza();
-    //Metodo imprimir
-    //void imprimir() const;
+
+    static std::string generarIDUnico(); // Genera un ID único
 };
-std::ostream& operator<<(std::ostream& os, const Dispositivo& armamento);
-#endif // DISPOSITIVO_H
+
+#endif
