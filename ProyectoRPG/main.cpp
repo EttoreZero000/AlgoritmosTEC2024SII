@@ -63,6 +63,7 @@ void menu(std::string title, std::string (&options)[3], int selectedOption) {
                 } else {
                     printCentered(options[i], (consoleSize.Y / 2) + i, consoleSize);
                 }
+                    printCentered("Hola", 1, consoleSize);
             }
         }
 
