@@ -6,9 +6,10 @@
 
 class claseMap {
 private:
+    
+public:
     int size;
     int floor;
-public:
     std::list<char> box;
     claseMap(int _size, int _floor);
     claseMap(int _size, int _floor, std::list<char> _box);

@@ -48,13 +48,31 @@ void claseMap::generarMapa() {
     }
 }
 
-void claseMap::imprimirBox(COORD consoleSize){
-    std::string boxString;
-    for (const char& c : box) {
-        boxString += c;
+void claseMap::imprimirBox(COORD consoleSize) {
+    // Construir la línea superior/inferior
+    std::string topRow = "+";
+    for (int i = 0; i < size; ++i) {
+        topRow += "---------------------+";
     }
+    // Construir la línea intermedia
+    std::string middleRow = "|";
+    for (int i = 0; i < size; ++i) {
+        middleRow += "                     |";
+    }
+    // Ajustar la posición de la impresión
+    int startY = 0;
 
-    // Imprimir la cadena centrada
-    printCentered(boxString, consoleSize.Y / 3, consoleSize);
+    // Imprimir la cuadrícula
+    for (int i = 0; i < size; ++i) {
+        printCentered(topRow, startY + i * 5, consoleSize); // Línea superior/inferior
+        for(int j=1;j<5;j++)
+        printCentered(middleRow, startY + i * 5 + j, consoleSize);
+    }
+    printCentered(topRow, startY + size * 5, consoleSize);
 
+    std::string a;
+    for(char c : box){
+        a=a+c;
+    }
+    printCentered(a, startY + size * 5+1, consoleSize);
 }
