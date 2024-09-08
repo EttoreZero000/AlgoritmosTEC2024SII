@@ -3,33 +3,8 @@
 #include <windows.h>  // Para COORD
 #include <thread>  // Para sleep_for
 #include <chrono>  // Para milliseconds
-
-// Función auxiliar para ocultar el cursor
-void hideCursor() {
-    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO info;
-    info.dwSize = 100;
-    info.bVisible = FALSE; // Ocultar el cursor
-    SetConsoleCursorInfo(consoleHandle, &info);
-}
-
-// Función para obtener el tamaño de la consola real
-COORD getConsoleSize() {
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-    COORD size;
-    size.X = csbi.srWindow.Right - csbi.srWindow.Left + 1; // Columnas
-    size.Y = csbi.srWindow.Bottom - csbi.srWindow.Top + 1; // Filas
-    return size;
-}
-
-// Función para imprimir un texto centrado en una fila específica
-void printCentered(const std::string &text, int row, COORD consoleSize) {
-    int col = (consoleSize.X - text.length()) / 2;  // Calcular la columna para centrar el texto
-    COORD pos = { (short)col, (short)row };
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-    std::cout << text;
-}
+#include "utils.h"
+#include "claseMap.h"
 
 // Menú que se actualiza cuando hay un cambio de selección o de tamaño de la consola
 void menu(std::string title, std::string (&options)[3], int selectedOption) {
@@ -63,7 +38,6 @@ void menu(std::string title, std::string (&options)[3], int selectedOption) {
                 } else {
                     printCentered(options[i], (consoleSize.Y / 2) + i, consoleSize);
                 }
-                    printCentered("Hola", 1, consoleSize);
             }
         }
 
@@ -79,12 +53,13 @@ void menu(std::string title, std::string (&options)[3], int selectedOption) {
                 if (selectedOption > 2) selectedOption = 0; // Volver al inicio
             } else if (key == 13) { // Tecla Enter
                 system("cls");
-                printCentered("Opción seleccionada: " + options[selectedOption], consoleSize.Y / 2, consoleSize);
-                printCentered("Puto el que lo lea", consoleSize.Y / 2 + 1, consoleSize);
-                printCentered("1234567890", consoleSize.Y -1, consoleSize);
-                printCentered("0987654321", 0, consoleSize);
-                std::cout << consoleSize.Y;
-                std::cout << consoleSize.X;
+                //printCentered("Opción seleccionada: " + options[selectedOption], consoleSize.Y / 2, consoleSize);
+
+                claseMap mapa1(5,1);
+                mapa1.generarMapa();
+                mapa1.imprimirBox(consoleSize);
+                //std::cout << consoleSize.Y;
+                //std::cout << consoleSize.X;
                 std::cin.get(); // Esperar a que se presione una tecla
                 break; // Salir del ciclo al seleccionar una opción
             }
@@ -116,7 +91,8 @@ void menu(std::string title, std::string (&options)[3], int selectedOption) {
 }
 
 int main() {
-    std::string title = "Heroes y Mazmorras";
+    SetConsoleOutputCP(CP_UTF8);
+    std::string title = "Héroes y Mazmorras";
     std::string options[3] = {"Partida Nueva", "Cargar Partida", "Salir"};
     int selectedOption = 0; // Opción seleccionada actualmente
     hideCursor();
