@@ -6,9 +6,19 @@
 #include "utils.h"
 #include "claseMap.h"
 
+bool boolSize(COORD &prevConsoleSize, COORD &consoleSize){
+    consoleSize = getConsoleSize();
+    if(consoleSize.X != prevConsoleSize.X || consoleSize.Y != prevConsoleSize.Y){
+        prevConsoleSize=consoleSize;
+        system("cls");
+        return true;
+    }else{
+        return false;
+    }
+}
+
 // Menú que se actualiza cuando hay un cambio de selección o de tamaño de la consola
-void menu(std::string title, std::string (&options)[3], int selectedOption) {
-    COORD consoleSize = getConsoleSize();
+int menu(std::string title, std::string (&options)[3], int selectedOption, COORD consoleSize) {
     COORD prevConsoleSize = consoleSize;  // Tamaño previo de la consola
     int prevSelectedOption = -1;  // Para rastrear si hay cambios en la selección
 
@@ -52,16 +62,8 @@ void menu(std::string title, std::string (&options)[3], int selectedOption) {
                 selectedOption++;
                 if (selectedOption > 2) selectedOption = 0; // Volver al inicio
             } else if (key == 13) { // Tecla Enter
-                system("cls");
-                //printCentered("Opción seleccionada: " + options[selectedOption], consoleSize.Y / 2, consoleSize);
-
-                claseMap mapa1(5,1);
-                mapa1.generarMapa();
-                mapa1.imprimirBox(consoleSize);
-                //std::cout << consoleSize.Y;
-                //std::cout << consoleSize.X;
-                std::cin.get(); // Esperar a que se presione una tecla
-                break; // Salir del ciclo al seleccionar una opción
+                return selectedOption;
+               
             }
 
             // Solo actualizar la pantalla si la selección ha cambiado
@@ -84,19 +86,40 @@ void menu(std::string title, std::string (&options)[3], int selectedOption) {
                 }
             }
         }
-
-        // Pausa breve para evitar alto uso de CPU
-        std::this_thread::sleep_for(std::chrono::milliseconds(0));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
 int main() {
+    COORD consoleSize = getConsoleSize();
+    COORD prevConsoleSize = consoleSize;
     SetConsoleOutputCP(CP_UTF8);
     std::string title = "Héroes y Mazmorras";
     std::string options[3] = {"Partida Nueva", "Cargar Partida", "Salir"};
     int selectedOption = 0; // Opción seleccionada actualmente
     hideCursor();
     // Ciclo del menú
-    menu(title, options, selectedOption);
+    selectedOption = menu(title, options, selectedOption, consoleSize);
+    if (selectedOption==0){
+        claseMap mapa1(10,1);
+        mapa1.generarMapa();
+        mapa1.imprimirBox(consoleSize);
+        while(true){
+            if(boolSize(prevConsoleSize, consoleSize)){
+                mapa1.imprimirBox(consoleSize);
+            }
+            if(_kbhit()){
+                char key = _getch();
+                if (key==13){
+                    break;
+                }
+            }
+        }
+        //std::cout << consoleSize.Y;
+        //std::cout << consoleSize.X;
+    }
+    system("cls");
+    std::cout << selectedOption;
+    std::cin.get();
     return 0;
 }
