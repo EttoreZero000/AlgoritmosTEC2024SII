@@ -6,12 +6,12 @@
 
 // Constructor sin 'box'
 claseMap::claseMap(int _size, int _floor)
-    : size(_size), floor(_floor), box(100, ' ') {  // Inicializa 'box' con 25 elementos '-'
+    : size(_size), floor(_floor), box(100, '-') { 
 }
 
 // Constructor con 'box'
 claseMap::claseMap(int _size, int _floor, std::list<char> _box)
-    : size(_size), floor(_floor), box(_box) {  // Inicializa 'box' con la lista dada
+    : size(_size), floor(_floor), box(_box) {
 }
 
 // Implementación del método generarMapa
@@ -26,11 +26,11 @@ void claseMap::generarMapa() {
             int pos = (numeroRandy - 1) * 10 + (numeroRandx - 1);  // Calcula la posición
 
             auto it = box.begin();
-            std::advance(it, pos);  // Avanza el iterador a la posición calculada
-                if (*it == ' ') {  // Verifica si la posición está vacía
-                    *it = 'E';  // Guarda 'e' en la posición calculada
-                    elementosInsertados++;  // Incrementa el contador solo si se insertó un nuevo elemento
-                }
+            std::advance(it, pos);
+            if (*it == ' ') { 
+                *it = 'E';
+                elementosInsertados++;
+            }
         }
     }
     elementosInsertados=0;
