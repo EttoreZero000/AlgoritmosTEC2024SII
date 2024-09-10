@@ -18,7 +18,7 @@ bool boolSize(COORD &prevConsoleSize, COORD &consoleSize){
 }
 
 // Menú que se actualiza cuando hay un cambio de selección o de tamaño de la consola
-int menu(std::string title, std::string (&options)[3], int selectedOption, COORD consoleSize) {
+int menu(std::string title, std::string (&options)[5], int selectedOption, COORD consoleSize) {
     COORD prevConsoleSize = consoleSize;  // Tamaño previo de la consola
     int prevSelectedOption = -1;  // Para rastrear si hay cambios en la selección
 
@@ -86,7 +86,7 @@ int menu(std::string title, std::string (&options)[3], int selectedOption, COORD
                 }
             }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
@@ -95,25 +95,51 @@ int main() {
     COORD prevConsoleSize = consoleSize;
     SetConsoleOutputCP(CP_UTF8);
     std::string title = "Héroes y Mazmorras";
-    std::string options[3] = {"Partida Nueva", "Cargar Partida", "Salir"};
+    std::string options[5] = {"Partida Nueva", "Cargar Partida", "Salir", "Tirar dados", "Armamento"};
     int selectedOption = 0; // Opción seleccionada actualmente
     hideCursor();
     // Ciclo del menú
     selectedOption = menu(title, options, selectedOption, consoleSize);
     if (selectedOption==0){
+        selectedOption=3;
         claseMap mapa1(10,1);
         mapa1.generarMapa();
         mapa1.imprimirBox(consoleSize);
+        printMenu(options, 3, selectedOption, consoleSize);
         while(true){
             if(boolSize(prevConsoleSize, consoleSize)){
                 mapa1.imprimirBox(consoleSize);
+                printMenu(options, 3, selectedOption, consoleSize); // Actualiza el índice de inicio
             }
             if(_kbhit()){
-                char key = _getch();
-                if (key==13){
-                    break;
-                }
-            }
+        int prevSelectedOption = selectedOption;
+        char key = _getch();
+
+        // Movimiento hacia arriba
+        if (key == 72) {
+            selectedOption--;
+            if (selectedOption < 3) selectedOption = 4; // Mantener dentro del rango
+        }
+        // Movimiento hacia abajo
+        else if (key == 80) {
+            selectedOption++;
+            if (selectedOption > 4) selectedOption = 3; // Mantener dentro del rango
+        }
+        // Si se presiona Enter, salir del bucle
+        else if (key == 13) {
+            break;
+        }
+
+        // Solo actualizar si la selección ha cambiado
+        if (selectedOption != prevSelectedOption) {
+            prevSelectedOption = selectedOption;
+            system("cls"); // Limpia la pantalla antes de dibujar
+
+            // Imprimir el submenú
+            mapa1.imprimirBox(consoleSize);
+            printMenu(options, 3, selectedOption, consoleSize);
+        }
+    }
         }
         //std::cout << consoleSize.Y;
         //std::cout << consoleSize.X;
