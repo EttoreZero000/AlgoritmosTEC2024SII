@@ -1,3 +1,4 @@
+#include "controladorAcciones.h"
 #include <xinput.h>
 #include <iostream>
 #include <windows.h>
@@ -5,7 +6,6 @@
 
 #pragma comment(lib, "xinput9_1_0.lib")
 
-// Códigos de teclas
 const int keyDownArrow = 80;
 const int keyUpArrow = 72;
 const int keyRightArrow = 77;
@@ -105,12 +105,13 @@ int DetectKeyboardInput() {
         int key = _getch(); // Captura la tecla presionada
 
         if (key == keyDownArrow) {
-            std::cout << "Acción detectada en teclado: Hacia abajo." << std::endl;
             return 1; // Acción hacia abajo
         }
         if (key == keyUpArrow) {
-            std::cout << "Acción detectada en teclado: Hacia arriba." << std::endl;
             return 2; // Acción hacia arriba
+        }
+        if (key == keyEnter){
+            return 5;
         }
     }
 
@@ -129,38 +130,31 @@ bool HasSignificantChange(const XINPUT_STATE& oldState, const XINPUT_STATE& newS
             oldState.Gamepad.wButtons != newState.Gamepad.wButtons);
 }
 
-int main() {
+int controladorInput() {
     XINPUT_STATE previousState;
     ZeroMemory(&previousState, sizeof(XINPUT_STATE));
 
-    while (true) {
-        XINPUT_STATE state;
-        ZeroMemory(&state, sizeof(XINPUT_STATE));
-
-        bool controllerConnected = (XInputGetState(0, &state) == ERROR_SUCCESS);
-
-        if (controllerConnected) {
-            // Si el controlador está conectado, verificar cambios en su estado
-            if (HasSignificantChange(previousState, state)) {
-                previousState = state; // Actualiza el estado anterior
-
-                // Detecta la entrada del controlador
-                int accion = DetectControllerInput(state);
-                if (accion > 0) {
-                    std::cout << accion;
-                } 
-
-            }
+    XINPUT_STATE state;
+    ZeroMemory(&state, sizeof(XINPUT_STATE));
+    bool controllerConnected = (XInputGetState(0, &state) == ERROR_SUCCESS);
+    if (controllerConnected) {
+        // Si el controlador está conectado, verificar cambios en su estado
+        if (HasSignificantChange(previousState, state)) {
+            previousState = state; // Actualiza el estado anterior
+            // Detecta la entrada del controlador
+            int accion = DetectControllerInput(state);
+            if (accion > 0) {
+                if(accion==5){
+                    Sleep(500);
+                }
+                return accion;
+            } 
         }
-        // Siempre detectar la entrada del teclado
-        int accionTeclado = DetectKeyboardInput();
-        if (accionTeclado == 1) {
-            // Acción hacia abajo detectada en teclado
-        } else if (accionTeclado == 2) {
-            // Acción hacia arriba detectada en teclado
-        }
-
-        Sleep(100); // Espera 100 ms entre comprobaciones
+    }
+    // Siempre detectar la entrada del teclado
+    int accionTeclado = DetectKeyboardInput();
+    if (accionTeclado > 0) {
+        return accionTeclado;
     }
 
     return 0;

@@ -5,6 +5,7 @@
 #include <chrono>  // Para milliseconds
 #include "utils.h"
 #include "claseMap.h"
+#include "controladorAcciones.h"
 
 bool boolSize(COORD &prevConsoleSize, COORD &consoleSize){
     consoleSize = getConsoleSize();
@@ -49,20 +50,17 @@ int menu(std::string title, std::string (&options)[5], int selectedOption, COORD
                 }
             }
         }
-
-        if (_kbhit()) { // Si se presiona una tecla
-            char key = _getch();
-            
+        int input=controladorInput();
+        if (input>0) { // Si se presiona una tecla
             // Navegar con las teclas de flechas
-            if (key == 72) { // Flecha hacia arriba
+            if (input == 2) { // Flecha hacia arriba
                 selectedOption--;
                 if (selectedOption < 0) selectedOption = 2; // Volver al final
-            } else if (key == 80) { // Flecha hacia abajo
+            } else if (input == 1) { // Flecha hacia abajo
                 selectedOption++;
                 if (selectedOption > 2) selectedOption = 0; // Volver al inicio
-            } else if (key == 13) { // Tecla Enter
+            } else if (input == 5) { // Tecla Enter
                 return selectedOption;
-               
             }
 
             // Solo actualizar la pantalla si la selección ha cambiado
@@ -82,7 +80,7 @@ int menu(std::string title, std::string (&options)[5], int selectedOption, COORD
                 }
             }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        Sleep(100);
     }
 }
 
@@ -98,6 +96,7 @@ int main() {
     selectedOption = menu(title, options, selectedOption, consoleSize);
     
     if (selectedOption==0){
+        selectedOption=3;
         claseMap mapa1(10,1);
         mapa1.generarMapa();
         mapa1.imprimirBox(consoleSize);
@@ -107,21 +106,21 @@ int main() {
                 mapa1.imprimirBox(consoleSize);
                 printMenu(options, 3, selectedOption, consoleSize); // Actualiza el índice de inicio
             }
-            if(_kbhit()){
+            int input=controladorInput();
+            if(input>0){
                 int prevSelectedOption = selectedOption;
-                char key = _getch();
                 // Movimiento hacia arriba
-                if (key == 72) {
+                if (input == 2) {
                     selectedOption--;
                     if (selectedOption < 3) selectedOption = 4; // Mantener dentro del rango
                 }
                 // Movimiento hacia abajo
-                else if (key == 80) {
+                else if (input == 1) {
                     selectedOption++;
                     if (selectedOption > 4) selectedOption = 3; // Mantener dentro del rango
                 }
                 // Si se presiona Enter, salir del bucle
-                else if (key == 13) {
+                else if (input == 5) {
                     break;
                 }
                 // Solo actualizar si la selección ha cambiado
@@ -133,10 +132,11 @@ int main() {
                     printMenu(options, 3, selectedOption, consoleSize);
                 }
             }
+        Sleep(100);
         }
     }
     system("cls");
     std::cout << selectedOption;
-    std::cin.get();
+    Sleep(500);
     return 0;
 }
