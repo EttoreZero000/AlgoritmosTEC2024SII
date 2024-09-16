@@ -39,7 +39,6 @@ int menu(std::string title, std::string (&options)[5], int selectedOption, COORD
         if (consoleSize.X != prevConsoleSize.X || consoleSize.Y != prevConsoleSize.Y) {
             prevConsoleSize = consoleSize;  // Actualizar el tamaño previo
             system("cls");  // Limpiar la pantalla
-
             // Redibujar el título y las opciones centradas
             printCentered(title, consoleSize.Y / 4, consoleSize);
             for (int i = 0; i < 3; i++) {
@@ -69,13 +68,10 @@ int menu(std::string title, std::string (&options)[5], int selectedOption, COORD
             // Solo actualizar la pantalla si la selección ha cambiado
             if (selectedOption != prevSelectedOption) {
                 prevSelectedOption = selectedOption;
-
                 // Limpiar pantalla y redibujar
                 system("cls");
-
                 // Imprimir el título centrado
                 printCentered(title, consoleSize.Y / 4, consoleSize);
-
                 // Mostrar las opciones y resaltar la opción seleccionada
                 for (int i = 0; i < 3; i++) {
                     if (i == selectedOption) {
@@ -96,12 +92,12 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     std::string title = "Héroes y Mazmorras";
     std::string options[5] = {"Partida Nueva", "Cargar Partida", "Salir", "Tirar dados", "Armamento"};
-    int selectedOption = 0; // Opción seleccionada actualmente
+    int selectedOption = 0;
     hideCursor();
-    // Ciclo del menú
+    // Aqui se ejecuta el menu
     selectedOption = menu(title, options, selectedOption, consoleSize);
+    
     if (selectedOption==0){
-        selectedOption=3;
         claseMap mapa1(10,1);
         mapa1.generarMapa();
         mapa1.imprimirBox(consoleSize);
@@ -112,37 +108,32 @@ int main() {
                 printMenu(options, 3, selectedOption, consoleSize); // Actualiza el índice de inicio
             }
             if(_kbhit()){
-        int prevSelectedOption = selectedOption;
-        char key = _getch();
-
-        // Movimiento hacia arriba
-        if (key == 72) {
-            selectedOption--;
-            if (selectedOption < 3) selectedOption = 4; // Mantener dentro del rango
+                int prevSelectedOption = selectedOption;
+                char key = _getch();
+                // Movimiento hacia arriba
+                if (key == 72) {
+                    selectedOption--;
+                    if (selectedOption < 3) selectedOption = 4; // Mantener dentro del rango
+                }
+                // Movimiento hacia abajo
+                else if (key == 80) {
+                    selectedOption++;
+                    if (selectedOption > 4) selectedOption = 3; // Mantener dentro del rango
+                }
+                // Si se presiona Enter, salir del bucle
+                else if (key == 13) {
+                    break;
+                }
+                // Solo actualizar si la selección ha cambiado
+                if (selectedOption != prevSelectedOption) {
+                    prevSelectedOption = selectedOption;
+                    system("cls"); // Limpia la pantalla antes de dibujar
+                    // Imprimir el submenú
+                    mapa1.imprimirBox(consoleSize);
+                    printMenu(options, 3, selectedOption, consoleSize);
+                }
+            }
         }
-        // Movimiento hacia abajo
-        else if (key == 80) {
-            selectedOption++;
-            if (selectedOption > 4) selectedOption = 3; // Mantener dentro del rango
-        }
-        // Si se presiona Enter, salir del bucle
-        else if (key == 13) {
-            break;
-        }
-
-        // Solo actualizar si la selección ha cambiado
-        if (selectedOption != prevSelectedOption) {
-            prevSelectedOption = selectedOption;
-            system("cls"); // Limpia la pantalla antes de dibujar
-
-            // Imprimir el submenú
-            mapa1.imprimirBox(consoleSize);
-            printMenu(options, 3, selectedOption, consoleSize);
-        }
-    }
-        }
-        //std::cout << consoleSize.Y;
-        //std::cout << consoleSize.X;
     }
     system("cls");
     std::cout << selectedOption;
