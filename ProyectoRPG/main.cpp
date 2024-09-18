@@ -100,11 +100,11 @@ int main() {
         claseMap mapa1(10,1);
         mapa1.generarMapa();
         mapa1.imprimirBox(consoleSize);
-        printMenu(options, 3, selectedOption, consoleSize);
+        printMenu(options, 3, selectedOption, consoleSize, 2);
         while(true){
             if(boolSize(prevConsoleSize, consoleSize)){
                 mapa1.imprimirBox(consoleSize);
-                printMenu(options, 3, selectedOption, consoleSize); // Actualiza el índice de inicio
+                printMenu(options, 3, selectedOption, consoleSize, 2); // Actualiza el índice de inicio
             }
             int input=controladorInput();
             if(input>0){
@@ -129,7 +129,7 @@ int main() {
                     system("cls"); // Limpia la pantalla antes de dibujar
                     // Imprimir el submenú
                     mapa1.imprimirBox(consoleSize);
-                    printMenu(options, 3, selectedOption, consoleSize);
+                    printMenu(options, 3, selectedOption, consoleSize, 2);
                 }
             }
         Sleep(100);

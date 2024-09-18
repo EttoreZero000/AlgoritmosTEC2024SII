@@ -103,3 +103,8 @@ void claseMap::imprimirBox(COORD consoleSize) {
     }
     printCentered(topRow, startY + size * h, consoleSize);
 }
+
+char claseMap::verCasilla(int x, int y){
+    x=x+(y*10);
+    return box[x];
+}

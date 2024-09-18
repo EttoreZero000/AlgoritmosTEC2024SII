@@ -17,6 +17,7 @@ public:
 
     void generarMapa();
     void imprimirBox(COORD consoleSize);
+    char verCasilla(int x, int y);
 };
 
 #endif // CLASEMAP_H

@@ -15,11 +15,11 @@ const int keyBackspace = 8;
 const int keyZ = 122;
 const int keyX = 120;
 
-// Función que detecta la entrada del controlador
+// Función que detecta la entrada solo del controlador
 int DetectControllerInput(const XINPUT_STATE& state) {
     // Detectar si se presiona la cruceta abajo o el joystick hacia abajo
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN || 
-        state.Gamepad.sThumbRY < -8000 || 
+        state.Gamepad.sThumbRY < -32000 || 
         state.Gamepad.sThumbLY < -8000) {
         return 1; // Acción hacia abajo
     }
@@ -99,7 +99,7 @@ int DetectControllerInput(const XINPUT_STATE& state) {
 }
 
 
-// Función que detecta la entrada del teclado
+// Función que detecta la entrada solo del teclado
 int DetectKeyboardInput() {
     if (_kbhit()) { // Si una tecla fue presionada
         int key = _getch(); // Captura la tecla presionada
@@ -117,7 +117,7 @@ int DetectKeyboardInput() {
 
     return 0; // No se detectó una acción relevante
 }
-
+// Ver si se realizo un cambio en el mando
 bool HasSignificantChange(const XINPUT_STATE& oldState, const XINPUT_STATE& newState) {
     const int JOYSTICK_THRESHOLD = 1000; // Umbral para cambio significativo en el joystick
 
@@ -129,7 +129,7 @@ bool HasSignificantChange(const XINPUT_STATE& oldState, const XINPUT_STATE& newS
             oldState.Gamepad.bRightTrigger != newState.Gamepad.bRightTrigger ||
             oldState.Gamepad.wButtons != newState.Gamepad.wButtons);
 }
-
+// Funcion central de controlador de inputs, siempre devuelve un int.
 int controladorInput() {
     XINPUT_STATE previousState;
     ZeroMemory(&previousState, sizeof(XINPUT_STATE));

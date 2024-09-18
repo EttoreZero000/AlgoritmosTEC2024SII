@@ -4,9 +4,10 @@
 #include <windows.h>  // Para COORD
 #include <thread>  // Para sleep_for
 #include <chrono>  // Para milliseconds
+#include <iterator>
 
 // Función auxiliar para ocultar el cursor
-void hideCursor() {
+void hideCursor() { 
     HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO info;
     info.dwSize = 100;
@@ -14,7 +15,7 @@ void hideCursor() {
     SetConsoleCursorInfo(consoleHandle, &info);
 }
 
-// Función para obtener el tamaño de la consola real
+// Función para obtener el tamaño de la consola real, se obtiene en COORD
 COORD getConsoleSize() {
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
@@ -25,22 +26,24 @@ COORD getConsoleSize() {
 }
 
 // Función para imprimir un texto centrado en una fila específica
+// Parámetros, texto (string), en que fila (int), (COORD)
 void printCentered(const std::string &text, int row, COORD consoleSize) {
-    int col = (consoleSize.X - text.length()) / 2;  // Calcular la columna para centrar el texto
+    int col = (consoleSize.X - text.length()) / 2;
     COORD pos = { (short)col, (short)row };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
     std::cout << text;
 }
 
+// Imprime algo en un lugar exacto, texto (string), fila(int), columna(int)
 void printPos(const std::string &text, int row, int col) {
     COORD pos = { (short)col, (short)row };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
     std::cout << text;
 }
-
-void printMenu(std::string (&options)[5], int startIndex, int &selectedOption, COORD consoleSize) {
+// Funcion auxiliar para mostrar el menu de forma rapida. 
+void printMenu(std::string (&options)[5], int startIndex, int &selectedOption, COORD consoleSize, int cantidadLista) {
     // Recorre las dos opciones disponibles en el submenú
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < cantidadLista; i++) {
         int optionIndex = startIndex + i; // Calcula el índice basado en `startIndex`
         if (optionIndex == selectedOption) {
             printCentered("> " + options[optionIndex] + " <", (consoleSize.Y / 1.2) + i, consoleSize); // Puedes ajustar el valor de `consoleSize.Y / 2` para centrar
