@@ -15,6 +15,8 @@ const int keyBackspace = 8;
 const int keyZ = 122;
 const int keyX = 120;
 
+bool isButtonAHeld = false; // Bandera para el estado del botón A
+
 // Función que detecta la entrada solo del controlador
 int DetectControllerInput(const XINPUT_STATE& state) {
     // Detectar si se presiona la cruceta abajo o el joystick hacia abajo
@@ -47,7 +49,12 @@ int DetectControllerInput(const XINPUT_STATE& state) {
 
     // Detectar si se presiona el botón A
     if (state.Gamepad.wButtons & XINPUT_GAMEPAD_A) {
-        return 5; // Acción botón A
+        if (!isButtonAHeld) { // Solo devuelve acción si A no estaba ya presionado
+            isButtonAHeld = true; // Marca que A está presionado
+            return 5; // Acción botón A
+        }
+    } else {
+        isButtonAHeld = false; // Restablecer la bandera cuando se suelta A
     }
 
     // Detectar si se presiona el botón B
@@ -98,7 +105,6 @@ int DetectControllerInput(const XINPUT_STATE& state) {
     return 0; // No se detectó una acción relevante
 }
 
-
 // Función que detecta la entrada solo del teclado
 int DetectKeyboardInput() {
     if (_kbhit()) { // Si una tecla fue presionada
@@ -117,7 +123,8 @@ int DetectKeyboardInput() {
 
     return 0; // No se detectó una acción relevante
 }
-// Ver si se realizo un cambio en el mando
+
+// Ver si se realizó un cambio en el mando
 bool HasSignificantChange(const XINPUT_STATE& oldState, const XINPUT_STATE& newState) {
     const int JOYSTICK_THRESHOLD = 1000; // Umbral para cambio significativo en el joystick
 
@@ -129,7 +136,8 @@ bool HasSignificantChange(const XINPUT_STATE& oldState, const XINPUT_STATE& newS
             oldState.Gamepad.bRightTrigger != newState.Gamepad.bRightTrigger ||
             oldState.Gamepad.wButtons != newState.Gamepad.wButtons);
 }
-// Funcion central de controlador de inputs, siempre devuelve un int.
+
+// Función central de controlador de inputs, siempre devuelve un int.
 int controladorInput() {
     XINPUT_STATE previousState;
     ZeroMemory(&previousState, sizeof(XINPUT_STATE));
@@ -139,16 +147,13 @@ int controladorInput() {
     bool controllerConnected = (XInputGetState(0, &state) == ERROR_SUCCESS);
     if (controllerConnected) {
         // Si el controlador está conectado, verificar cambios en su estado
-        if (HasSignificantChange(previousState, state)) {
-            previousState = state; // Actualiza el estado anterior
+        //if (HasSignificantChange(previousState, state)) {
+            //previousState = state; // Actualiza el estado anterior
             // Detecta la entrada del controlador
             int accion = DetectControllerInput(state);
             if (accion > 0) {
-                if(accion==5){
-                    Sleep(500);
-                }
                 return accion;
-            } 
+            //} 
         }
     }
     // Siempre detectar la entrada del teclado

@@ -9,7 +9,7 @@ claseMap::claseMap(int _size, int _floor)
 }
 
 // Constructor con 'box'
-claseMap::claseMap(int _size, int _floor, std::vector<char> _box)
+claseMap::claseMap(int _size, int _floor, std::list<char> _box)
     : size(_size), floor(_floor), box(_box) {
 }
 
@@ -21,30 +21,30 @@ void claseMap::generarMapa() {
     while (elementosInsertados < 10) {
         int numeroRandx = rand() % size;  // Rango ajustado
         int numeroRandy = rand() % size;  // Rango ajustado
+
         if (numeroRandx != 0 || numeroRandy != 0) {
             int pos = numeroRandy * size + numeroRandx;  // Calcula la posición
 
-            if (pos >= 0 && pos < box.size()) {
-                if (box[pos] == ' ') { 
-                    box[pos] = 'E';
-                    elementosInsertados++;
-                }
+            auto it = std::next(box.begin(), pos);  // Usa std::next para obtener el iterador en la posición
+            if (*it == ' ') {
+                *it = 'E';
+                elementosInsertados++;
             }
         }
     }
-    
+
     elementosInsertados = 0;
     while (elementosInsertados < 15) {
-        int numeroRandx = rand() % size;  // Rango ajustado
-        int numeroRandy = rand() % size;  // Rango ajustado
+        int numeroRandx = rand() % size;
+        int numeroRandy = rand() % size;
+
         if (numeroRandx != 0 || numeroRandy != 0) {
-            int pos = numeroRandy * size + numeroRandx;  // Calcula la posición
-    
-            if (pos >= 0 && pos < box.size()) {
-                if (box[pos] == ' ') {  // Verifica si la posición está vacía
-                    box[pos] = 'C';  // Guarda 'C' en la posición calculada
-                    elementosInsertados++;  // Incrementa el contador solo si se insertó un nuevo elemento
-                }
+            int pos = numeroRandy * size + numeroRandx;
+
+            auto it = std::next(box.begin(), pos);
+            if (*it == ' ') {
+                *it = 'C';
+                elementosInsertados++;
             }
         }
     }
@@ -86,7 +86,11 @@ void claseMap::imprimirBox(COORD consoleSize) {
                 std::string forma = "     "; // Espacio en blanco por defecto
                 if (j == h / 2) { // Solo imprimir la forma en la fila del medio
                     forma = "  "; // Espacio antes de la forma
-                    forma += box[i * size + k]; // Añadir el carácter de la lista
+
+                    // Avanza hasta el elemento en la posición i * size + k usando std::next
+                    auto it = std::next(box.begin(), i * size + k);  // Moverse a la posición correcta en la lista
+                    forma += *it; // Añadir el carácter de la lista
+
                     forma += "  "; // Espacio después de la forma
                 }
                 middleRow += forma + "|";
@@ -104,7 +108,13 @@ void claseMap::imprimirBox(COORD consoleSize) {
     printCentered(topRow, startY + size * h, consoleSize);
 }
 
-char claseMap::verCasilla(int x, int y){
-    x=x+(y*10);
-    return box[x];
+
+char claseMap::verCasilla(int x, int y) {
+    int pos = x + (y * size);  // Calcula la posición
+    auto it = std::next(box.begin(), pos);  // Obtiene el iterador en la posición
+    return *it;
+}
+
+int claseMap::getFloor(){
+    return floor;
 }
