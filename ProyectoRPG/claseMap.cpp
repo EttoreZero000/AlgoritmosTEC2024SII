@@ -48,6 +48,39 @@ void claseMap::generarMapa() {
             }
         }
     }
+
+    elementosInsertados = 0;
+    while (elementosInsertados < 1) {
+        int numeroRandx = rand() % size;
+        int numeroRandy = rand() % size;
+
+        if (numeroRandx != 0 || numeroRandy != 0) {
+            int pos = numeroRandy * size + numeroRandx;
+
+            auto it = std::next(box.begin(), pos);
+            if (*it == ' ') {
+                *it = 'T';
+                elementosInsertados++;
+            }
+        }
+    }
+
+    elementosInsertados = 0;
+    while (elementosInsertados < 1) {
+        int numeroRandx = rand() % size;
+        int numeroRandy = rand() % size;
+
+        if (numeroRandx != 0 || numeroRandy != 0) {
+            int pos = numeroRandy * size + numeroRandx;
+
+            auto it = std::next(box.begin(), pos);
+            if (*it == ' ') {
+                *it = 'S';
+                elementosInsertados++;
+            }
+        }
+    }
+
 }
 
 void claseMap::imprimirBox(COORD consoleSize) {
