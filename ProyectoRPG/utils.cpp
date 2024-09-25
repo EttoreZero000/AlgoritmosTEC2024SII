@@ -1,14 +1,14 @@
 #include <iostream>
-#include <conio.h>  // Para _kbhit() y _getch()
+#include <conio.h>    // Para _kbhit() y _getch()
 #include <windows.h>  // Para COORD
-#include <thread>  // Para sleep_for
-#include <chrono>  // Para milliseconds
+#include <thread>     // Para sleep_for
+#include <chrono>     // Para milliseconds
+#include <fstream>    //Guardar y cargar partidas
 #include "claseMap.h"
 #include "clases/personajesYEnemigos/padre.h"
 #include "controladorAcciones.h"
 #include "clases/personajesYEnemigos/personajesPrincipales.h"
 #include "clases/Armamento/claseArmamento.h"
-#include <fstream> //Guardar y cargar partidas
 
 
 // Maximizar la ventana
@@ -60,6 +60,7 @@ void printCentered(const std::string &text, int row, COORD consoleSize) {
     std::cout << text;
 }
 
+// Posicionar en X y Y arbitrarias
 void printPos(const std::string &text, int row, int col) {
     COORD pos = { (short)col, (short)row };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
@@ -81,10 +82,6 @@ void verHistoria(COORD consoleSize){
         }
     }
 }
-
-
-// Imprime un texto en una posición específica
-
 
 // Función auxiliar para mostrar el menú rápidamente
 void printMenu(std::string (&options)[6], int startIndex, int &selectedOption, COORD consoleSize, int cantidadLista) {
@@ -199,7 +196,7 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
             }
             // Si se presiona Enter, salir del bucle
             else if (input == 5) {
-                break;
+                return selectedOption;
             }
             //Preciona F1
             else if(input==10){
@@ -221,7 +218,7 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
             if(selectedOption==3){
                 srand(static_cast<unsigned>(time(0))); // Inicializa la semilla para rand()
                 int dado1=setDados();
-                
+                Sleep(200);
                 int dado2=setDados();
                 std::cout << dado1 << " " <<dado2;
                 int movimientoX = 0, movimientoY = 0;
@@ -293,12 +290,13 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
                             }
                         }//if input 2
 
+                        if(input==5){
+                            break;
+                        }
+
 
                     }//while true
-                }
-            }else if(selectedOption==4){
-
-            }
+                } //If
         }
 
         Sleep(100);  // Pausa para no sobrecargar el procesador

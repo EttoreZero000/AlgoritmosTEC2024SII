@@ -17,4 +17,5 @@ void tablero(int selectedOption, COORD consoleSize, COORD prevConsoleSize, std::
 void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string (&options)[6], int &selectedOption);
 int setDados();
 void writesave();
+void iniciar(COORD &consoleSize, std::string (&options)[6], int &selectedOption);
 #endif // UTILS_H
