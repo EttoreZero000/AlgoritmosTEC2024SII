@@ -17,6 +17,7 @@ public:
 
     void generarMapa();
     void imprimirBox(COORD consoleSize);
+    void imprimirBoxAdmin(COORD consoleSize);
     char verCasilla(int x, int y);
     int getFloor();
 };

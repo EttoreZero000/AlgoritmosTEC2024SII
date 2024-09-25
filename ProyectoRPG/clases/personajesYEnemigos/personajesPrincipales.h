@@ -8,11 +8,14 @@
 class personajesHeroes : public padrePersonajes {
 public:
     // Constructor de personajesHeroes
-    personajesHeroes(std::string nombre, int vida, int ataque, bool tipoPersonaje, Arma arma);
+    personajesHeroes(std::string nombre, int vida, int ataque, bool tipoPersonaje, Arma arma, int oro);
     
     // Métodos
-    int givePunch(int damage);
+    int givePunch();
     void setPunch(int damage);
+    void setOro(int oro);
+    Arma giveArma();
+    void setArma(Arma arma);
     int setCraps();
 };
 

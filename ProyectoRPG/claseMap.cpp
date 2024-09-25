@@ -122,9 +122,9 @@ void claseMap::imprimirBox(COORD consoleSize) {
 
                     // Avanza hasta el elemento en la posición i * size + k usando std::next
                     auto it = std::next(box.begin(), i * size + k);  // Moverse a la posición correcta en la lista
-                    forma += *it; // Añadir el carácter de la lista
+                    //forma += *it; // Añadir el carácter de la lista
 
-                    forma += "  "; // Espacio después de la forma
+                    forma += "   "; // Espacio después de la forma
                 }
                 middleRow += forma + "|";
             }
@@ -150,4 +150,63 @@ char claseMap::verCasilla(int x, int y) {
 
 int claseMap::getFloor(){
     return floor;
+}
+
+
+void claseMap::imprimirBoxAdmin(COORD consoleSize) {
+    system("cls");
+    int h = 3;
+
+    // Construir la línea superior/inferior
+    std::string topRow = "   +";
+    for (int i = 0; i < size; ++i) {
+        topRow += "-----+";
+    }
+
+    // Construir la fila de etiquetas de columnas (A-J)
+    std::string columnLabels = "    ";
+    for (char c = 'A'; c < 'A' + size; ++c) {
+        columnLabels += "  ";
+        columnLabels += c;
+        columnLabels += "   ";
+    }
+
+    // Ajustar la posición de la impresión
+    int startY = 1;  // Incrementamos en 1 para dejar espacio para las etiquetas de las columnas
+
+    // Imprimir las etiquetas de las columnas
+    printCentered(columnLabels, startY - 1, consoleSize);
+
+    // Imprimir la cuadrícula
+    for (int i = 0; i < size; ++i) {
+        // Imprimir la línea superior de cada fila
+        printCentered(topRow, startY + i * h, consoleSize); 
+
+        for (int j = 1; j < h; j++) {
+            std::string middleRow = "|";
+            for (int k = 0; k < size; ++k) {
+                // Aquí decides qué forma imprimir en cada casilla
+                std::string forma = "     "; // Espacio en blanco por defecto
+                if (j == h / 2) { // Solo imprimir la forma en la fila del medio
+                    forma = "  "; // Espacio antes de la forma
+
+                    // Avanza hasta el elemento en la posición i * size + k usando std::next
+                    auto it = std::next(box.begin(), i * size + k);  // Moverse a la posición correcta en la lista
+                    forma += *it; // Añadir el carácter de la lista
+
+                    forma += "  "; // Espacio después de la forma
+                }
+                middleRow += forma + "|";
+            }
+            // Imprimir la etiqueta de la fila antes de la fila del tablero
+            if (j == h / 2) {
+                std::string rowLabel = std::to_string(i + 1); // Etiqueta de fila (1-10)
+                middleRow = rowLabel + (rowLabel.length() == 1 ? "  " : " ") + middleRow; // Ajusta espacio para las etiquetas
+            } else {
+                middleRow = "   " + middleRow; // Espacio en filas que no son la del medio
+            }
+            printCentered(middleRow, startY + i * h + j, consoleSize);
+        }
+    }
+    printCentered(topRow, startY + size * h, consoleSize);
 }

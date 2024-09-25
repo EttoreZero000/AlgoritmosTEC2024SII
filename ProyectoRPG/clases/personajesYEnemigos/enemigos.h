@@ -8,13 +8,17 @@
 #include "../Armamento/claseArmamento.h"
 
 class enemigos : public padrePersonajes {
+private:
+    bool comp;
 public:
     // Constructor de personajesHeroes
-    enemigos(std::string nombre, int vida, int ataque, bool tipoPersonaje, Arma arma);
+    enemigos(std::string nombre, int vida, int ataque, bool tipoPersonaje, Arma arma, bool comp, int oro);
     
     // Métodos
     int givePunch(int damage);
-    void setPunch(int damage, std::list<personajesHeroes> lista);
+    void setPunch(std::list<personajesHeroes> lista);
+    Arma giveArma();
+    int giveOro();
 };
 
 #endif // ENEMIGOS_H

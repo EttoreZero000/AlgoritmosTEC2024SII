@@ -13,7 +13,7 @@ const int keyLeftArrow = 75;
 const int keyEnter = 13;
 const int keyBackspace = 8;
 const int keyZ = 122;
-const int keyX = 120;
+const int keyX = 120;  
 
 bool isButtonAHeld = false; // Bandera para el estado del botón A
 

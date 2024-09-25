@@ -4,6 +4,7 @@
 #include <string>
 #include <windows.h>
 
+void maximizar();
 void hideCursor();
 COORD getConsoleSize();
 void printCentered(const std::string &text, int row, COORD consoleSize);

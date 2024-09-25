@@ -5,6 +5,11 @@
 #include <chrono>  // Para milliseconds
 #include "controladorAcciones.h"
 #include "claseMap.h"
+//Maximizar la ventana
+void maximizar() {
+    HWND hwnd = GetConsoleWindow();
+    ShowWindow(hwnd, WS_MINIMIZE);
+}
 
 // Función auxiliar para ocultar el cursor
 void hideCursor() { 
@@ -133,7 +138,7 @@ int menu(std::string title, std::string (&options)[5], int selectedOption, COORD
                 }
             }
         }
-        Sleep(100);
+        Sleep(0);
     }
 }
 
@@ -186,6 +191,6 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
             }
         }
 
-        Sleep(100);  // Pausa para no sobrecargar el procesador
+        Sleep(0);  // Pausa para no sobrecargar el procesador
     }
 }
