@@ -14,6 +14,7 @@ const int keyEnter = 13;
 const int keyBackspace = 8;
 const int keyZ = 122;
 const int keyX = 120;  
+const int f1 = 59;
 
 bool isButtonAHeld = false; // Bandera para el estado del botón A
 
@@ -119,6 +120,9 @@ int DetectKeyboardInput() {
         if (key == keyEnter || key == keyZ){
             return 5;
         }
+        if (key == f1){
+            return 10;
+        }    
     }
 
     return 0; // No se detectó una acción relevante

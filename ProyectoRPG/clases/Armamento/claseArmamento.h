@@ -8,33 +8,14 @@
 
 class Arma {
 public:
-    int id;
+    int damage;
     std::string nombre;
-    ListaSimple<int> listaAtributos;
-    int usos, tipo, disponibles, damage;
-    ListaSimple<int> listaModificadores;
-
-    // Constructor por defecto
-    Arma();
 
     // Constructor completo (sin ID)
-    Arma(const std::string& nombre, const ListaSimple<int>& listaAtributos, int usos, int tipo, int disponibles, const ListaSimple<int>& listaModificadores, int damage);
+    Arma(const std::string& nombre, int damage);
 
-    // Constructor con ID
-    Arma(int id, const std::string& nombre, const ListaSimple<int>& listaAtributos, int usos, int tipo, int disponibles, const ListaSimple<int>& listaModificadores, int damage);
-    // Métodos estáticos para manejar el archivo de ID
-    static void loadNextId();
-    static void saveNextId();
-    //Metodos varios
-    int getId();
+    //Métodos varios
     int getDamage();
-    void setAtributos(ListaSimple<int> listaAtributos);
-    void setModificadores(ListaSimple<int> listaModificadores);
-    void imprimir() const;
 
-private:
-    static int nextId; // Variable estática para generar IDs automáticamente
-    static const std::string idFileName; // Nombre del archivo donde se guarda el ID
 };
-std::ostream& operator<<(std::ostream& os, const Arma& Arma);
 #endif // ARMAMENTO_H

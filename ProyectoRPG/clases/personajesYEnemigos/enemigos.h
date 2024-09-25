@@ -15,10 +15,10 @@ public:
     enemigos(std::string nombre, int vida, int ataque, bool tipoPersonaje, Arma arma, bool comp, int oro);
     
     // Métodos
-    int givePunch(int damage);
-    void setPunch(std::list<personajesHeroes> lista);
-    Arma giveArma();
-    int giveOro();
+    int getPunch(int damage);
+    void setPunch(std::list<personajesH> lista);
+    Arma getArma();
+    int getOro();
 };
 
 #endif // ENEMIGOS_H

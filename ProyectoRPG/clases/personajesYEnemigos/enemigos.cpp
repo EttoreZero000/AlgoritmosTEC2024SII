@@ -8,30 +8,28 @@ enemigos::enemigos(std::string nombre, int vida, int ataque, bool tipoPersonaje,
     : padrePersonajes(nombre, vida, ataque, tipoPersonaje, arma, oro) // Llamamos al constructor del padre
 {
 }
-int enemigos::givePunch(int damage) {
+int enemigos::getPunch(int damage) {
     if (comp){
         return arma.getDamage() + ataque;
     }else{
         return ataque;
     }
 }
-
-void enemigos::setPunch(std::list<personajesHeroes> lista) {
+void enemigos::setPunch(std::list<personajesH> lista) {
     if(lista.size() > 1){
         srand(static_cast<unsigned>(time(NULL)));
-        std::list<personajesHeroes>::iterator it = lista.begin();
+        std::list<personajesH>::iterator it = lista.begin();
         std::advance(it, rand() % lista.size() + 1);
-        personajesHeroes e1 = *it;
-        vida = vida - e1.givePunch();
+        personajesH e1 = *it;
+        vida = vida - e1.getPunch();
     }else{
-        personajesHeroes e1 = lista.front();
-        vida = vida - e1.givePunch();
+        personajesH e1 = lista.front();
+        vida = vida - e1.getPunch();
     }
 }
-
-Arma enemigos::giveArma(){
+Arma enemigos::getArma(){
     return arma;
 }
-int enemigos::giveOro(){
+int enemigos::getOro(){
     return oro;
 }

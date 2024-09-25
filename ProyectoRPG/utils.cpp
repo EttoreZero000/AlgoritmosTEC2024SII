@@ -3,15 +3,26 @@
 #include <windows.h>  // Para COORD
 #include <thread>  // Para sleep_for
 #include <chrono>  // Para milliseconds
-#include "controladorAcciones.h"
 #include "claseMap.h"
-//Maximizar la ventana
+#include "clases/personajesYEnemigos/padre.h"
+#include "controladorAcciones.h"
+#include "clases/personajesYEnemigos/personajesPrincipales.h"
+#include "clases/Armamento/claseArmamento.h"
+#include <fstream> //Guardar y cargar partidas
+
+
+// Maximizar la ventana
 void maximizar() {
     HWND hwnd = GetConsoleWindow();
     ShowWindow(hwnd, WS_MINIMIZE);
 }
 
-// Función auxiliar para ocultar el cursor
+// Número random de 1 a 6
+int setDados(){
+    srand(static_cast<unsigned>(time(NULL)));
+    return rand() % 6 + 1;
+}
+// Ocultar el cursor
 void hideCursor() { 
     HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
     CONSOLE_CURSOR_INFO info;
@@ -30,6 +41,17 @@ COORD getConsoleSize() {
     return size;
 }
 
+// Función que gestiona el tamaño de la consola
+bool boolSize(COORD &prevConsoleSize, COORD &consoleSize){
+    consoleSize = getConsoleSize();
+    if(consoleSize.X != prevConsoleSize.X || consoleSize.Y != prevConsoleSize.Y){
+        prevConsoleSize = consoleSize;
+        system("cls");
+        return true;
+    }
+    return false;
+}
+
 // Función para imprimir un texto centrado en una fila específica
 void printCentered(const std::string &text, int row, COORD consoleSize) {
     int col = (consoleSize.X - text.length()) / 2;
@@ -38,23 +60,10 @@ void printCentered(const std::string &text, int row, COORD consoleSize) {
     std::cout << text;
 }
 
-// Imprime un texto en una posición específica
 void printPos(const std::string &text, int row, int col) {
     COORD pos = { (short)col, (short)row };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
     std::cout << text;
-}
-
-// Función auxiliar para mostrar el menú rápidamente
-void printMenu(std::string (&options)[5], int startIndex, int &selectedOption, COORD consoleSize, int cantidadLista) {
-    for (int i = 0; i < cantidadLista; i++) {
-        int optionIndex = startIndex + i;
-        if (optionIndex == selectedOption) {
-            printCentered("> " + options[optionIndex] + " <", (consoleSize.Y / 1.2) + i, consoleSize);
-        } else {
-            printCentered(options[optionIndex], (consoleSize.Y / 1.2) + i, consoleSize);
-        }
-    }
 }
 
 // Mostrar la historia
@@ -73,19 +82,24 @@ void verHistoria(COORD consoleSize){
     }
 }
 
-// Función que gestiona el tamaño de la consola
-bool boolSize(COORD &prevConsoleSize, COORD &consoleSize){
-    consoleSize = getConsoleSize();
-    if(consoleSize.X != prevConsoleSize.X || consoleSize.Y != prevConsoleSize.Y){
-        prevConsoleSize = consoleSize;
-        system("cls");
-        return true;
+
+// Imprime un texto en una posición específica
+
+
+// Función auxiliar para mostrar el menú rápidamente
+void printMenu(std::string (&options)[6], int startIndex, int &selectedOption, COORD consoleSize, int cantidadLista) {
+    for (int i = 0; i < cantidadLista; i++) {
+        int optionIndex = startIndex + i;
+        if (optionIndex == selectedOption) {
+            printCentered("> " + options[optionIndex] + " <", (consoleSize.Y / 1.2) + i, consoleSize);
+        } else {
+            printCentered(options[optionIndex], (consoleSize.Y / 1.2) + i, consoleSize);
+        }
     }
-    return false;
 }
 
 // Menú que se actualiza cuando hay un cambio de selección o de tamaño de la consola
-int menu(std::string title, std::string (&options)[5], int selectedOption, COORD consoleSize) {
+int menu(std::string title, std::string (&options)[6], int selectedOption, COORD consoleSize) {
     COORD prevConsoleSize = consoleSize;
     int prevSelectedOption = -1;
 
@@ -143,25 +157,32 @@ int menu(std::string title, std::string (&options)[5], int selectedOption, COORD
 }
 
 
-void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string (&options)[5], int &selectedOption) {
+void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string (&options)[6], int &selectedOption) {
     // Muestra la historia
     verHistoria(consoleSize);
-    
+    bool viewBox=false, refresh=false;
+
     // Inicializar el mapa
     selectedOption = 3;
-    claseMap mapa1(10, 1);
+    claseMap mapa1(10, 0);
+    mapa1.setFloor();
+    mapa1.setX(0);
+    mapa1.setY(0);
     mapa1.generarMapa();
-    mapa1.imprimirBox(consoleSize);
+    mapa1.imprimirBox(consoleSize, viewBox);
+    Arma arma1("Ballesta", 2);
     printMenu(options, 3, selectedOption, consoleSize, 2);
-
+    personajesH personajeP("Thorfin", 3, 3, true, arma1, 0);
+    std::list<personajesH> ali;  // Lista de aliados
+    ali.push_front(personajeP);
     // Bucle para el manejo del menú
     while (true) {
         // Verifica si el tamaño de la consola ha cambiado
         if (boolSize(prevConsoleSize, consoleSize)) {
-            mapa1.imprimirBox(consoleSize);
+            mapa1.imprimirBox(consoleSize, viewBox);
             printMenu(options, 3, selectedOption, consoleSize, 2);
         }
-        
+
         // Manejo de input
         int input = controladorInput();
         if (input > 0) {
@@ -180,17 +201,117 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
             else if (input == 5) {
                 break;
             }
+            //Preciona F1
+            else if(input==10){
+                viewBox=!viewBox;
+                refresh=true;
+            }
 
             // Solo actualizar si la selección ha cambiado
-            if (selectedOption != prevSelectedOption) {
+            if (selectedOption != prevSelectedOption || refresh) {
+                refresh=false;
                 prevSelectedOption = selectedOption;
                 system("cls"); // Limpia la pantalla antes de dibujar
                 // Imprimir el submenú
-                mapa1.imprimirBox(consoleSize);
+                mapa1.imprimirBox(consoleSize, viewBox);
                 printMenu(options, 3, selectedOption, consoleSize, 2);
+                std::cout << mapa1.Casilla();
+            }
+            
+            if(selectedOption==3){
+                srand(static_cast<unsigned>(time(0))); // Inicializa la semilla para rand()
+                int dado1=setDados();
+                
+                int dado2=setDados();
+                std::cout << dado1 << " " <<dado2;
+                int movimientoX = 0, movimientoY = 0;
+                bool dado1Usado = false;
+                bool dado2Usado = false;
+
+                if(dado1>dado2){
+                    while(true){
+                        if (input == 3) {
+                            if (movimientoX == dado1 + dado2) {
+                                movimientoX -= dado1;
+                                dado1Usado=false;
+                            } else if (movimientoX == dado2) {
+                                movimientoX = 0;
+                                dado2Usado=false;
+                            } else if (movimientoX == 0) {
+                                movimientoX = -dado2;
+                                dado2Usado = true; // Marca dado2 como usado
+                            } else if (movimientoX == -dado2) {
+                                movimientoX -= dado1;
+                                dado1Usado = true; // Marca dado1 como usado
+                            }
+                        }//if input 3
+                        if (input == 4) {
+                            if (movimientoX == -dado1 - dado2) {
+                                movimientoX += dado1;
+                                dado1Usado=false;
+                            } else if (movimientoX == -dado2) {
+                                movimientoX = 0;
+                                dado2Usado=false;
+                            } else if (movimientoX == 0) {
+                                movimientoX = dado2;
+                                dado2Usado = true; // Marca dado2 como usado
+                            } else if (movimientoX == dado2) {
+                                movimientoX = dado2 + dado1;
+                                dado1Usado = true; // Marca dado1 como usado
+                            }
+                        }//if input 4
+
+                        if (input == 1) {
+                            if (movimientoY == dado1 + dado2) {
+                                movimientoY -= dado1;
+                                dado1Usado=false;
+                            } else if (movimientoY == dado2) {
+                                movimientoY = 0;
+                                dado2Usado=false;
+                            } else if (movimientoY == 0) {
+                                movimientoY = dado2;
+                                dado2Usado = true; // Marca dado2 como usado
+                            } else if (movimientoY == dado1) {
+                                movimientoY = dado1 + dado2;
+                                dado1Usado = true; // Marca dado1 como usado
+                            }
+                        }//if input 1
+
+                        if (input == 2) {
+                            if (movimientoY == -dado1 - dado2) {
+                                movimientoY += dado1;
+                                dado1Usado=false;
+                            } else if (movimientoY == -dado2) {
+                                movimientoY = 0;
+                                dado2Usado=false;
+                            } else if (movimientoY == 0) {
+                                movimientoY = -dado2;
+                                dado2Usado = true; // Marca dado2 como usado
+                            } else if (movimientoY == -dado2) {
+                                movimientoY -= dado1;
+                                dado1Usado = true; // Marca dado1 como usado
+                            }
+                        }//if input 2
+
+
+                    }//while true
+                }
+            }else if(selectedOption==4){
+
             }
         }
 
-        Sleep(0);  // Pausa para no sobrecargar el procesador
+        Sleep(100);  // Pausa para no sobrecargar el procesador
     }
 }
+
+//void guardarProgreso(const std::string& nombreArchivo, int nivel, int puntaje) {
+//    std::ofstream archivo(nombreArchivo);
+//    if (archivo.is_open()) {
+//        archivo << nivel << "\n" << puntaje << "\n";
+//        archivo.close();
+//    } else {
+//        std::cerr << "No se pudo abrir el archivo para guardar." << std::endl;
+//    }
+//}  
+//}

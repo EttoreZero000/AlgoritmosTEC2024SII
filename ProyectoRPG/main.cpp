@@ -6,11 +6,11 @@
 
 int main() {
     maximizar();
+    SetConsoleOutputCP(CP_UTF8);
     COORD consoleSize = getConsoleSize();
     COORD prevConsoleSize = consoleSize;
-    SetConsoleOutputCP(CP_UTF8);
     std::string title = "Héroes y Mazmorras";
-    std::string options[5] = {"Partida Nueva", "Cargar Partida", "Salir", "Tirar dados", "Armamento"};
+    std::string options[6] = {"Partida Nueva", "Cargar Partida", "Salir", "Tirar dados", "Armamento", "Volver al menu"};
     int selectedOption = 0;
     hideCursor();
     // Llamar a la función menu
@@ -19,8 +19,14 @@ int main() {
     if (selectedOption == 0) {
         manejarPartidaNueva(consoleSize, prevConsoleSize, options, selectedOption);
     }
+    //else if (selectedOption == 1) {
+    //    break;
+    //}
     system("cls");
     std::cout << selectedOption;
     std::cin.get();
+
+    int posx;
+
     return 0;
 }
