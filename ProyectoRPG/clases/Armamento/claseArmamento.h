@@ -15,6 +15,7 @@ public:
     Arma(const std::string& nombre, int damage);
 
     //Métodos varios
+    std::string getNombre();
     int getDamage();
 
 };

@@ -94,6 +94,51 @@ void printMenu(std::string (&options)[6], int startIndex, int &selectedOption, C
     }
 }
 
+void printMenuArmas(const std::list<Arma> &listaArmas, std::list<Arma>::const_iterator selectedOption) {
+    system("cls"); // Limpiar la pantalla
+    int PosArma = 0;
+    for (auto it = listaArmas.begin(); it != listaArmas.end(); ++it) {
+        if (it == selectedOption) {
+            std::string arma = ">" + it->nombre + " | Daño: " + std::to_string(it->damage) + "<"; 
+            printPos(arma, PosArma, 0);
+        } else {
+            std::string arma = it->nombre + " | Daño: " + std::to_string(it->damage); 
+            printPos(arma, PosArma, 0);
+        }
+        PosArma++;
+    }
+}
+
+// Función para manejar la navegación del menú
+void manejarMenuArmas(std::list<Arma> &listaArmas, std::list<Arma>::iterator &selectedOption, bool& refresh) {
+    int input;
+    while (true) {
+        printMenuArmas(listaArmas, selectedOption); // Mostrar la lista de armas con el puntero actual
+        
+        input = controladorInput(); // Capturar la entrada del usuario
+        
+        if (input == 1) { // Presiona abajo
+            ++selectedOption;
+            if (selectedOption == listaArmas.end()) selectedOption = listaArmas.begin(); // Si supera el límite, regresa al primero
+            Sleep(250);
+        }
+        else if (input == 2) { // Presiona arriba
+            if (selectedOption == listaArmas.begin()) {
+                selectedOption = listaArmas.end(); // Si está en el primero y sube, va al último
+            }
+            --selectedOption;
+                Sleep(250);
+        }
+        else if (input == 5) { // Presiona Enter
+            //Puntero del Arma selecionada
+            Arma armaSeleccionada = *selectedOption;
+            refresh=true;
+            break;
+        }
+    }
+}
+
+
 // Menú que se actualiza cuando hay un cambio de selección o de tamaño de la consola
 int menu(std::string title, std::string (&options)[6], int selectedOption, COORD consoleSize) {
     COORD prevConsoleSize = consoleSize;
@@ -218,7 +263,12 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
     Arma arma1("Ballesta", 2);
     std::list<personajesH> aliados;
     personajesH personajePrincipal = crearPersonajePrincipal(aliados, "Thorfin", 3, 3, arma1);
+    //Crear lista para practica
+    Arma arma4("Ballesta", 1);
+    Arma arma2("Ballesta", 2);
+    Arma arma3("Ballesta", 3);
 
+    std::list<Arma> listaArmas = {arma4, arma2, arma3};
     // Imprimir el menú inicial
     printMenu(options, 3, selectedOption, consoleSize, 2);
 
@@ -242,7 +292,6 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
             std::string dado1String = "Dado 1: " + std::to_string(dado1);
             std::string dado2String = "Dado 2: " + std::to_string(dado2);
 
-            int movimientosRestantes = dado1;  // Comienza con el dado 1
             int input = 0;  // Para almacenar la entrada del controlador
             bool dado1Usado = false;  // Para saber si el dado 1 fue usado
             bool dado2Usado = false;  // Para saber si el dado 2 fue usado
@@ -323,7 +372,14 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
 
             // Mensaje final de la posición del personaje
         }
+        if (opcion == 4) {
+            std::list<Arma>::iterator selectArma = listaArmas.begin();
+            //Posiblemente cambiar para que nos devuelva el arma
+            manejarMenuArmas(listaArmas, selectArma, refresh);
+        }
 
+        std::string casilla(1, mapa1.Casilla());
+        printPos(casilla, 0, 0);
 
         Sleep(100);  // Pausa para no sobrecargar el procesador
     }

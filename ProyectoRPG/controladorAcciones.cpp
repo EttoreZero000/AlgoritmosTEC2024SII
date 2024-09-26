@@ -114,13 +114,19 @@ int DetectKeyboardInput() {
         if (key == keyDownArrow) {
             return 1; // Acción hacia abajo
         }
-        if (key == keyUpArrow) {
+        else if (key == keyUpArrow) {
             return 2; // Acción hacia arriba
         }
-        if (key == keyEnter || key == keyZ){
+        else if (key == keyLeftArrow){
+            return 3;
+        }
+        else if (key == keyRightArrow){
+            return 4;
+        }
+        else if (key == keyEnter || key == keyZ){
             return 5;
         }
-        if (key == f1){
+        else if (key == f1){
             return 10;
         }    
     }
