@@ -151,7 +151,12 @@ void claseMap::setX(int _x) {
 void claseMap::setY(int _y) {
      y = _y;
 }
-
+int claseMap::getX(){
+    return x;
+}
+int claseMap::getY(){
+    return y;
+}
 char claseMap::Casilla() {
     int pos = x + (y * size);  // Calcula la posición
     auto it = std::next(box.begin(), pos);  // Obtiene el iterador en la posición

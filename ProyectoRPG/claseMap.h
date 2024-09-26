@@ -15,7 +15,9 @@ public:
     claseMap(int _size, int _floor, std::list<char> _box);
 
     void setX(int x);
+    int getX();
     void setY(int y);
+    int getY();
     void generarMapa();
     void imprimirBox(COORD consoleSize, bool viewBox);
     char Casilla();

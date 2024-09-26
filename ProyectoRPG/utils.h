@@ -3,6 +3,8 @@
 
 #include <string>
 #include <windows.h>
+#include "clases\personajesYEnemigos\personajesPrincipales.h"
+#include "claseMap.h"
 
 void maximizar();
 void hideCursor();
@@ -18,4 +20,7 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
 int setDados();
 void writesave();
 void iniciar(COORD &consoleSize, std::string (&options)[6], int &selectedOption);
+void crearMapa(claseMap &mapa, COORD &consoleSize, bool &viewBox);
+personajesH crearPersonajePrincipal(std::list<personajesH> &aliados, const std::string &nombre, int fuerza, int agilidad, Arma &arma);
+int manejarMenu(claseMap &mapa, COORD &consoleSize, std::string (&options)[6], int &selectedOption, bool &viewBox, bool &refresh);
 #endif // UTILS_H

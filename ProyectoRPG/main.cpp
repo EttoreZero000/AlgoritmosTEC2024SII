@@ -17,6 +17,7 @@ int main() {
     selectedOption = menu(title, options, selectedOption, consoleSize);
     // Manejar la opción seleccionada
     if (selectedOption == 0) {
+        verHistoria(consoleSize);
         manejarPartidaNueva(consoleSize, prevConsoleSize, options, selectedOption);
     }
     //else if (selectedOption == 1) {

@@ -19,7 +19,6 @@ void maximizar() {
 
 // Número random de 1 a 6
 int setDados(){
-    srand(static_cast<unsigned>(time(NULL)));
     return rand() % 6 + 1;
 }
 // Ocultar el cursor
@@ -153,155 +152,183 @@ int menu(std::string title, std::string (&options)[6], int selectedOption, COORD
     }
 }
 
+void crearMapa(claseMap &mapa, COORD &consoleSize, bool &viewBox) {
+    mapa.setFloor();
+    mapa.setX(0);
+    mapa.setY(0);
+    mapa.generarMapa();
+    mapa.imprimirBox(consoleSize, viewBox);
+}
+
+personajesH crearPersonajePrincipal(std::list<personajesH> &aliados, const std::string &nombre, int fuerza, int agilidad, Arma &arma) {
+    personajesH personajeP(nombre, fuerza, agilidad, true, arma, 0);
+    aliados.push_front(personajeP);
+    return personajeP;
+}
+
+int manejarMenu(claseMap &mapa, COORD &consoleSize, std::string (&options)[6], int &selectedOption, bool &viewBox, bool &refresh) {
+    int prevSelectedOption = selectedOption;
+    
+    // Manejo de input
+    int input = controladorInput();
+    
+    if (input > 0) {
+        // Movimiento hacia arriba
+        if (input == 2) {
+            selectedOption--;
+            if (selectedOption < 3) selectedOption = 4; // Mantener dentro del rango
+        }
+        // Movimiento hacia abajo
+        else if (input == 1) {
+            selectedOption++;
+            if (selectedOption > 4) selectedOption = 3; // Mantener dentro del rango
+        }
+        // Si se presiona Enter, salir del bucle
+        else if (input == 5) {
+            return selectedOption;
+        }
+        // Preciona F1
+        else if (input == 10) {
+            viewBox = !viewBox;
+            refresh = true;
+        }
+
+        // Actualizar si la selección ha cambiado o si se requiere refrescar
+        if (selectedOption != prevSelectedOption || refresh) {
+            refresh = false;
+            prevSelectedOption = selectedOption;
+            system("cls"); // Limpia la pantalla antes de dibujar
+            // Imprimir el submenú
+            mapa.imprimirBox(consoleSize, viewBox);
+            printMenu(options, 3, selectedOption, consoleSize, 2);
+        }
+    }
+    return 0;
+}
 
 void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string (&options)[6], int &selectedOption) {
-    // Muestra la historia
-    verHistoria(consoleSize);
-    bool viewBox=false, refresh=false;
-
-    // Inicializar el mapa
+    bool viewBox = false, refresh = false;
     selectedOption = 3;
+
+    // Crear el mapa
     claseMap mapa1(10, 0);
-    mapa1.setFloor();
-    mapa1.setX(0);
-    mapa1.setY(0);
-    mapa1.generarMapa();
-    mapa1.imprimirBox(consoleSize, viewBox);
+    crearMapa(mapa1, consoleSize, viewBox);
+
+    // Crear arma y personajes
     Arma arma1("Ballesta", 2);
+    std::list<personajesH> aliados;
+    personajesH personajePrincipal = crearPersonajePrincipal(aliados, "Thorfin", 3, 3, arma1);
+
+    // Imprimir el menú inicial
     printMenu(options, 3, selectedOption, consoleSize, 2);
-    personajesH personajeP("Thorfin", 3, 3, true, arma1, 0);
-    std::list<personajesH> ali;  // Lista de aliados
-    ali.push_front(personajeP);
+
     // Bucle para el manejo del menú
     while (true) {
-        // Verifica si el tamaño de la consola ha cambiado
-        if (boolSize(prevConsoleSize, consoleSize)) {
+        // Verificar si el tamaño de la consola ha cambiado
+        if (boolSize(prevConsoleSize, consoleSize) || refresh) {
+            refresh=false;
             mapa1.imprimirBox(consoleSize, viewBox);
             printMenu(options, 3, selectedOption, consoleSize, 2);
         }
 
-        // Manejo de input
-        int input = controladorInput();
-        if (input > 0) {
-            int prevSelectedOption = selectedOption;
-            // Movimiento hacia arriba
-            if (input == 2) {
-                selectedOption--;
-                if (selectedOption < 3) selectedOption = 4; // Mantener dentro del rango
-            }
-            // Movimiento hacia abajo
-            else if (input == 1) {
-                selectedOption++;
-                if (selectedOption > 4) selectedOption = 3; // Mantener dentro del rango
-            }
-            // Si se presiona Enter, salir del bucle
-            else if (input == 5) {
-                return selectedOption;
-            }
-            //Preciona F1
-            else if(input==10){
-                viewBox=!viewBox;
-                refresh=true;
-            }
+        // Manejar el menú
+        int opcion=manejarMenu(mapa1, consoleSize, options, selectedOption, viewBox, refresh);
 
-            // Solo actualizar si la selección ha cambiado
-            if (selectedOption != prevSelectedOption || refresh) {
-                refresh=false;
-                prevSelectedOption = selectedOption;
-                system("cls"); // Limpia la pantalla antes de dibujar
-                // Imprimir el submenú
+        if (opcion == 3) {
+            int dado1 = setDados();
+            int dado2 = setDados();
+
+            // Mostrar los resultados de los dados en la consola
+            std::string dado1String = "Dado 1: " + std::to_string(dado1);
+            std::string dado2String = "Dado 2: " + std::to_string(dado2);
+
+            int movimientosRestantes = dado1;  // Comienza con el dado 1
+            int input = 0;  // Para almacenar la entrada del controlador
+            bool dado1Usado = false;  // Para saber si el dado 1 fue usado
+            bool dado2Usado = false;  // Para saber si el dado 2 fue usado
+
+            // Temporizador para evitar que ambos dados se consuman a la vez
+            auto ultimoMovimiento = std::chrono::steady_clock::now();
+
+            while (!dado1Usado || !dado2Usado) {
+                printPos(dado1String, consoleSize.Y / 2, consoleSize.X / 4);
+                printPos(dado2String, consoleSize.Y / 2 + 1, consoleSize.X / 4);
+                // Control de tiempo para evitar que se consuman los dados muy rápido
+                auto ahora = std::chrono::steady_clock::now();
+                std::chrono::duration<double> tiempoPasado = ahora - ultimoMovimiento;
+
+                // Si ha pasado menos de medio segundo, no permitimos un nuevo input
+                if (tiempoPasado.count() < 0.2) {
+                    continue;  // Esperamos un poco antes de procesar la siguiente entrada
+                }
+
+                // Leer entrada del controlador
+                input = controladorInput();
+
+                // Mover con dado 1 si aún no se ha usado
+                if (!dado1Usado) {
+                    if (input == 1) {  // Abajo
+                        mapa1.setY(std::min(mapa1.getY() + dado1, 9));  // Mover hacia abajo
+                        dado1Usado = true;  // Marcar dado 1 como usado
+                    } 
+                    else if (input == 2) {  // Arriba
+                        mapa1.setY(std::max(mapa1.getY() - dado1, 0));  // Mover hacia arriba
+                        dado1Usado = true;
+                    } 
+                    else if (input == 3) {  // Izquierda
+                        mapa1.setX(std::max(mapa1.getX() - dado1, 0));  // Mover a la izquierda
+                        dado1Usado = true;
+                    } 
+                    else if (input == 4) {  // Derecha
+                        mapa1.setX(std::min(mapa1.getX() + dado1, 9));  // Mover a la derecha
+                        dado1Usado = true;
+                    }
+
+                    // Registrar el tiempo del último movimiento
+                    ultimoMovimiento = std::chrono::steady_clock::now();
+                }
+
+                // Mover con dado 2 si el dado 1 ya fue usado
+                else if (dado1Usado && !dado2Usado) {
+                    if (input == 1) {  // Abajo
+                        mapa1.setY(std::min(mapa1.getY() + dado2, 9));  // Mover hacia abajo
+                        dado2Usado = true;  // Marcar dado 2 como usado
+                    } 
+                    else if (input == 2) {  // Arriba
+                        mapa1.setY(std::max(mapa1.getY() - dado2, 0));  // Mover hacia arriba
+                        dado2Usado = true;
+                    } 
+                    else if (input == 3) {  // Izquierda
+                        mapa1.setX(std::max(mapa1.getX() - dado2, 0));  // Mover a la izquierda
+                        dado2Usado = true;
+                    } 
+                    else if (input == 4) {  // Derecha
+                        mapa1.setX(std::min(mapa1.getX() + dado2, 9));  // Mover a la derecha
+                        dado2Usado = true;
+                    }
+
+                    // Registrar el tiempo del último movimiento
+                    ultimoMovimiento = std::chrono::steady_clock::now();
+                }
+
+                // Imprimir la nueva posición del personaje en el mapa
                 mapa1.imprimirBox(consoleSize, viewBox);
-                printMenu(options, 3, selectedOption, consoleSize, 2);
-                std::cout << mapa1.Casilla();
+
+                // Verificar si ambos dados ya fueron utilizados
+                if (dado1Usado && dado2Usado) {
+                    refresh=true;
+                    break;  // Salir del bucle
+                }
             }
-            
-            if(selectedOption==3){
-                srand(static_cast<unsigned>(time(0))); // Inicializa la semilla para rand()
-                int dado1=setDados();
-                Sleep(200);
-                int dado2=setDados();
-                std::cout << dado1 << " " <<dado2;
-                int movimientoX = 0, movimientoY = 0;
-                bool dado1Usado = false;
-                bool dado2Usado = false;
 
-                if(dado1>dado2){
-                    while(true){
-                        if (input == 3) {
-                            if (movimientoX == dado1 + dado2) {
-                                movimientoX -= dado1;
-                                dado1Usado=false;
-                            } else if (movimientoX == dado2) {
-                                movimientoX = 0;
-                                dado2Usado=false;
-                            } else if (movimientoX == 0) {
-                                movimientoX = -dado2;
-                                dado2Usado = true; // Marca dado2 como usado
-                            } else if (movimientoX == -dado2) {
-                                movimientoX -= dado1;
-                                dado1Usado = true; // Marca dado1 como usado
-                            }
-                        }//if input 3
-                        if (input == 4) {
-                            if (movimientoX == -dado1 - dado2) {
-                                movimientoX += dado1;
-                                dado1Usado=false;
-                            } else if (movimientoX == -dado2) {
-                                movimientoX = 0;
-                                dado2Usado=false;
-                            } else if (movimientoX == 0) {
-                                movimientoX = dado2;
-                                dado2Usado = true; // Marca dado2 como usado
-                            } else if (movimientoX == dado2) {
-                                movimientoX = dado2 + dado1;
-                                dado1Usado = true; // Marca dado1 como usado
-                            }
-                        }//if input 4
-
-                        if (input == 1) {
-                            if (movimientoY == dado1 + dado2) {
-                                movimientoY -= dado1;
-                                dado1Usado=false;
-                            } else if (movimientoY == dado2) {
-                                movimientoY = 0;
-                                dado2Usado=false;
-                            } else if (movimientoY == 0) {
-                                movimientoY = dado2;
-                                dado2Usado = true; // Marca dado2 como usado
-                            } else if (movimientoY == dado1) {
-                                movimientoY = dado1 + dado2;
-                                dado1Usado = true; // Marca dado1 como usado
-                            }
-                        }//if input 1
-
-                        if (input == 2) {
-                            if (movimientoY == -dado1 - dado2) {
-                                movimientoY += dado1;
-                                dado1Usado=false;
-                            } else if (movimientoY == -dado2) {
-                                movimientoY = 0;
-                                dado2Usado=false;
-                            } else if (movimientoY == 0) {
-                                movimientoY = -dado2;
-                                dado2Usado = true; // Marca dado2 como usado
-                            } else if (movimientoY == -dado2) {
-                                movimientoY -= dado1;
-                                dado1Usado = true; // Marca dado1 como usado
-                            }
-                        }//if input 2
-
-                        if(input==5){
-                            break;
-                        }
-
-
-                    }//while true
-                } //If
+            // Mensaje final de la posición del personaje
         }
+
 
         Sleep(100);  // Pausa para no sobrecargar el procesador
     }
 }
+
 
 //void guardarProgreso(const std::string& nombreArchivo, int nivel, int puntaje) {
 //    std::ofstream archivo(nombreArchivo);
