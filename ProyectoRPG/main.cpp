@@ -26,8 +26,5 @@ int main() {
     system("cls");
     std::cout << selectedOption;
     std::cin.get();
-
-    int posx;
-
     return 0;
 }

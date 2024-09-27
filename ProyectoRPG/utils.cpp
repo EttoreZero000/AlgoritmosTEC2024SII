@@ -112,11 +112,18 @@ void printMenuArmas(const std::list<Arma> &listaArmas, std::list<Arma>::const_it
 // Función para manejar la navegación del menú
 void manejarMenuArmas(std::list<Arma> &listaArmas, std::list<Arma>::iterator &selectedOption, bool& refresh) {
     int input;
+    auto previousOption = selectedOption; // Guardar el estado inicial
+    printMenuArmas(listaArmas, selectedOption);
+
     while (true) {
-        printMenuArmas(listaArmas, selectedOption); // Mostrar la lista de armas con el puntero actual
-        
+        // Verificar si hay un cambio entre la opción anterior y la actual
+        if (previousOption != selectedOption) {
+            printMenuArmas(listaArmas, selectedOption); // Mostrar el menú solo si ha habido un cambio
+            previousOption = selectedOption; // Actualizar la opción previa
+        }
+
         input = controladorInput(); // Capturar la entrada del usuario
-        
+
         if (input == 1) { // Presiona abajo
             ++selectedOption;
             if (selectedOption == listaArmas.end()) selectedOption = listaArmas.begin(); // Si supera el límite, regresa al primero
@@ -127,16 +134,17 @@ void manejarMenuArmas(std::list<Arma> &listaArmas, std::list<Arma>::iterator &se
                 selectedOption = listaArmas.end(); // Si está en el primero y sube, va al último
             }
             --selectedOption;
-                Sleep(250);
+            Sleep(250);
         }
         else if (input == 5) { // Presiona Enter
-            //Puntero del Arma selecionada
+            // Puntero del Arma seleccionada
             Arma armaSeleccionada = *selectedOption;
-            refresh=true;
+            refresh = true;
             break;
         }
     }
 }
+
 
 
 // Menú que se actualiza cuando hay un cambio de selección o de tamaño de la consola
@@ -205,9 +213,9 @@ void crearMapa(claseMap &mapa, COORD &consoleSize, bool &viewBox) {
     mapa.imprimirBox(consoleSize, viewBox);
 }
 
-personajesH crearPersonajePrincipal(std::list<personajesH> &aliados, const std::string &nombre, int fuerza, int agilidad, Arma &arma) {
-    personajesH personajeP(nombre, fuerza, agilidad, true, arma, 0);
-    aliados.push_front(personajeP);
+personajesH crearPersonajePrincipal(std::list<personajesH> &listaAliados, const std::string &nombre, int fuerza, int agilidad, Arma &arma) {
+    personajesH personajeP(nombre, fuerza, agilidad, true, arma, 0, 3);
+    listaAliados.push_back(personajeP);
     return personajeP;
 }
 
@@ -252,8 +260,13 @@ int manejarMenu(claseMap &mapa, COORD &consoleSize, std::string (&options)[6], i
 }
 
 void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string (&options)[6], int &selectedOption) {
+    //Cargar aqui las armas ya creadas.
+    //Cargar aqui las enemigos ya creadas.
+
+    std::srand(std::time(0));
     bool viewBox = false, refresh = false;
     selectedOption = 3;
+    std::string accionRealizada;
 
     // Crear el mapa
     claseMap mapa1(10, 0);
@@ -261,12 +274,12 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
 
     // Crear arma y personajes
     Arma arma1("Ballesta", 2);
-    std::list<personajesH> aliados;
-    personajesH personajePrincipal = crearPersonajePrincipal(aliados, "Thorfin", 3, 3, arma1);
+    std::list<personajesH> listaAliados;
+    personajesH personajePrincipal = crearPersonajePrincipal(listaAliados, "Thorfin", 3, 3, arma1);
     //Crear lista para practica
     Arma arma4("Ballesta", 1);
-    Arma arma2("Ballesta", 2);
-    Arma arma3("Ballesta", 3);
+    Arma arma2("Espada", 2);
+    Arma arma3("Palo", 3);
 
     std::list<Arma> listaArmas = {arma4, arma2, arma3};
     // Imprimir el menú inicial
@@ -366,6 +379,31 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
                 // Verificar si ambos dados ya fueron utilizados
                 if (dado1Usado && dado2Usado) {
                     refresh=true;
+
+                    char casilla = mapa1.Casilla();
+
+                    //Que pasa si caigo en casillas
+                    if (casilla == 'C'){
+                        int porcentaje = std::rand() % 3 + 1;
+                        if(porcentaje==1){
+                            personajePrincipal.setVidaMaxima();
+                            accionRealizada = "Abristes una cofre y te dio vida maxima";
+                        }else if(porcentaje==2){
+                            //Debe ser lista de los personajes
+                            personajePrincipal.curarVida();
+                            accionRealizada = "Abristes una cofre y te cur de 10%";
+                        }else if(porcentaje==3){
+                            //Elegir aleatoria de la lista de Armas
+                        }
+                    }else if (casilla == ' '){
+                        accionRealizada = "Estas complentado la vista";
+                    }else if (casilla == 'E'){
+                        accionRealizada = "Accion Enemigos";
+                    }else if (casilla == 'T'){
+                        accionRealizada = "Accion Taberna";
+                    }else if (casilla == 'S'){
+                        accionRealizada = "Accion Save";
+                    }
                     break;  // Salir del bucle
                 }
             }
@@ -378,8 +416,7 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
             manejarMenuArmas(listaArmas, selectArma, refresh);
         }
 
-        std::string casilla(1, mapa1.Casilla());
-        printPos(casilla, 0, 0);
+        printPos(accionRealizada, 0, 0);
 
         Sleep(100);  // Pausa para no sobrecargar el procesador
     }
