@@ -2,23 +2,21 @@
 #define ARMAMENTO_H
 
 #include <string>
+#include <vector>
 #include <fstream>
+#include "listasimple.h"
 
 class Arma {
 public:
     int damage;
     std::string nombre;
 
-    // Constructor completo
-    Arma();
+    // Constructor completo (sin ID)
     Arma(const std::string& nombre, int damage);
 
     //Métodos varios
     std::string getNombre();
     int getDamage();
-
-    void guardar(std::ofstream& out);
-    void cargar(std::ifstream& in);
 
 };
 #endif // ARMAMENTO_H

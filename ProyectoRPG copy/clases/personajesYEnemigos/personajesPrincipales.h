@@ -15,7 +15,6 @@ public:
     // Métodos
     int getPunch();
     void setVidaMaxima();
-    int getVida();
     void setPunch(int damage);
     void setOro(int oro);
     Arma getArma();

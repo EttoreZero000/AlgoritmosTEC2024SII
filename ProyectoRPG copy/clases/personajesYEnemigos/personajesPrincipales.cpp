@@ -11,9 +11,6 @@ personajesH::personajesH(std::string nombre, int vida, int ataque, bool tipoPers
 int personajesH::getPunch() {
     return arma.getDamage() + ataque;
 }
-int personajesH::getVida(){
-    return vida;
-}
 void personajesH::setVidaMaxima(){
     vidaMaxima+=1;
     vida+=1;

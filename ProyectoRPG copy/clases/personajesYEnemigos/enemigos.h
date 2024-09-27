@@ -12,16 +12,13 @@ private:
     bool comp;
 public:
     // Constructor de personajesHeroes
-    enemigos();
     enemigos(std::string nombre, int vida, int ataque, bool tipoPersonaje, Arma arma, bool comp, int oro);
     
     // Métodos
-    int getPunch();
-    void setPunch(int damage);
+    int getPunch(int damage);
+    void setPunch(std::list<personajesH> lista);
     Arma getArma();
     int getOro();
-    int getVida();
-    int getComp();
 };
 
 #endif // ENEMIGOS_H

@@ -8,7 +8,6 @@
 #include "clases/personajesYEnemigos/padre.h"
 #include "controladorAcciones.h"
 #include "clases/personajesYEnemigos/personajesPrincipales.h"
-#include "clases/personajesYEnemigos/enemigos.h"
 #include "clases/Armamento/claseArmamento.h"
 
 
@@ -84,8 +83,8 @@ void verHistoria(COORD consoleSize){
 }
 
 // Función auxiliar para mostrar el menú rápidamente
-void printMenu(std::string (&options)[9], int startIndex, int &selectedOption, COORD consoleSize, int cantidadLista) {
-    for (int i = 0; i < cantidadLista+1; i++) {
+void printMenu(std::string (&options)[6], int startIndex, int &selectedOption, COORD consoleSize, int cantidadLista) {
+    for (int i = 0; i < cantidadLista; i++) {
         int optionIndex = startIndex + i;
         if (optionIndex == selectedOption) {
             printCentered("> " + options[optionIndex] + " <", (consoleSize.Y / 1.2) + i, consoleSize);
@@ -220,7 +219,7 @@ personajesH crearPersonajePrincipal(std::list<personajesH> &listaAliados, const 
     return personajeP;
 }
 
-int manejarMenu(claseMap &mapa, COORD &consoleSize, std::string (&options)[9], int &selectedOption, bool &viewBox, bool &refresh, int indice, int cantidad) {
+int manejarMenu(claseMap &mapa, COORD &consoleSize, std::string (&options)[6], int &selectedOption, bool &viewBox, bool &refresh) {
     int prevSelectedOption = selectedOption;
     
     // Manejo de input
@@ -230,13 +229,12 @@ int manejarMenu(claseMap &mapa, COORD &consoleSize, std::string (&options)[9], i
         // Movimiento hacia arriba
         if (input == 2) {
             selectedOption--;
-            if (selectedOption < indice) selectedOption = cantidad+indice; // Mantener dentro del rango
+            if (selectedOption < 3) selectedOption = 4; // Mantener dentro del rango
         }
         // Movimiento hacia abajo
-        
         else if (input == 1) {
             selectedOption++;
-            if (selectedOption > cantidad+indice) selectedOption = indice; // Mantener dentro del rango
+            if (selectedOption > 4) selectedOption = 3; // Mantener dentro del rango
         }
         // Si se presiona Enter, salir del bucle
         else if (input == 5) {
@@ -255,18 +253,18 @@ int manejarMenu(claseMap &mapa, COORD &consoleSize, std::string (&options)[9], i
             system("cls"); // Limpia la pantalla antes de dibujar
             // Imprimir el submenú
             mapa.imprimirBox(consoleSize, viewBox);
-            printMenu(options, indice, selectedOption, consoleSize, cantidad);
+            printMenu(options, 3, selectedOption, consoleSize, 2);
         }
     }
     return 0;
 }
 
-void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string (&options)[9], int &selectedOption) {
+void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string (&options)[6], int &selectedOption) {
     //Cargar aqui las armas ya creadas.
     //Cargar aqui las enemigos ya creadas.
 
     std::srand(std::time(0));
-    bool viewBox = false, refresh = false, vidaCero = false;
+    bool viewBox = false, refresh = false;
     selectedOption = 3;
     std::string accionRealizada;
 
@@ -297,7 +295,7 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
         }
 
         // Manejar el menú
-        int opcion=manejarMenu(mapa1, consoleSize, options, selectedOption, viewBox, refresh, 3, 2);
+        int opcion=manejarMenu(mapa1, consoleSize, options, selectedOption, viewBox, refresh);
 
         if (opcion == 3) {
             int dado1 = setDados();
@@ -388,76 +386,21 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
                     if (casilla == 'C'){
                         int porcentaje = std::rand() % 3 + 1;
                         if(porcentaje==1){
-                            //Se aumenta la vida solo el personajePrincipal
                             personajePrincipal.setVidaMaxima();
-                            accionRealizada = "Abriste un cofre y te dio vida maxima";
+                            accionRealizada = "Abristes una cofre y te dio vida maxima";
                         }else if(porcentaje==2){
-                            //Se cura solo el personajePrincipal
+                            //Debe ser lista de los personajes
                             personajePrincipal.curarVida();
-                            accionRealizada = "Abriste un cofre y te cura el 10%";
+                            accionRealizada = "Abristes una cofre y te cur de 10%";
                         }else if(porcentaje==3){
                             //Elegir aleatoria de la lista de Armas
                         }
                     }else if (casilla == ' '){
-                        accionRealizada = "Estas contemplando la vista";
+                        accionRealizada = "Estas complentado la vista";
                     }else if (casilla == 'E'){
                         accionRealizada = "Accion Enemigos";
-                        enemigos e1;  // Declaración fuera de los bloques if
-                            int a = rand() % 8 + 1;
-                            if (a == 1){
-                                Arma arma10("Pedro", 10);
-                                e1 = enemigos("Enemigo", mapa1.getFloor()+1, mapa1.getFloor(), false, arma10, true, 100);
-                            } else {
-                                Arma armaVacia("Vacia", 0);
-                                e1 = enemigos("Enemigo", mapa1.getFloor()+1, mapa1.getFloor(), false, armaVacia, false, 100);
-                            }
-                            int b = rand() % 2 + 1;
-                            while(true){
-                                if (b == 1){
-                                    for(personajesH h1 : listaAliados){
-                                        e1.setPunch(h1.getPunch());
-                                    }
-                                    if(e1.getVida()<=0){
-                                        std::string dañoString="Aliado(s) infligió " + std::to_string(personajePrincipal.getPunch());
-                                        printPos(dañoString, consoleSize.Y-1, 0);
-                                        break;
-                                    }
-                                    std::list<personajesH>::iterator it = listaAliados.begin();
-                                    std::advance(it, rand() % listaAliados.size());
-                                    personajesH personajeAPegar = *it;
-                                    personajeAPegar.setPunch(e1.getPunch());
-                                }else{
-                                    std::list<personajesH>::iterator it = listaAliados.begin();
-                                    std::advance(it, rand() % listaAliados.size());
-                                    personajesH personajeAPegar = *it;
-                                    personajeAPegar.setPunch(e1.getPunch());
-                                    for(personajesH h1 : listaAliados){
-                                        e1.setPunch(h1.getPunch());
-                                    }
-                                }
-                                if(e1.getVida()<=0){
-                                    if (e1.getComp()){
-                                        listaArmas.push_back(e1.getArma());
-                                    }
-                                    personajePrincipal.setOro(e1.getOro());
-                                    break;
-                                }else if (personajePrincipal.getVida()<=0){
-                                    vidaCero=true;
-                                    break;
-                                }
-                            }
-
                     }else if (casilla == 'T'){
                         accionRealizada = "Accion Taberna";
-                        printMenu(options, 6, selectedOption, consoleSize, 2);
-                        while(true){
-                            if (boolSize(prevConsoleSize, consoleSize) || refresh) {
-                            refresh=false;
-                            mapa1.imprimirBox(consoleSize, viewBox);
-                            printMenu(options, 6, selectedOption, consoleSize, 2);
-                            }
-                        int opcionTaberna=manejarMenu(mapa1, consoleSize, options, selectedOption, viewBox, refresh, 6, 2);
-                        }
                     }else if (casilla == 'S'){
                         accionRealizada = "Accion Save";
                     }
