@@ -22,6 +22,19 @@ public:
     int getOro();
     int getVida();
     int getComp();
+    void guardar(std::ofstream& out);
+    std::string getNombre();
+    void setDamage(int damage);
+    void setVida(int vida);
+
+    void mostrarDatos() const {
+        std::cout << "Nombre: " << nombre << "\n"
+                  << "Vida: " << vida << "\n"
+                  << "Ataque: " << ataque << "\n"
+                  << "Tipo de Personaje: " << tipoPersonaje << "\n"
+                  << "Compañero: " << comp << "\n"
+                  << "Oro: " << oro << "\n";
+    }
 };
 
 #endif // ENEMIGOS_H

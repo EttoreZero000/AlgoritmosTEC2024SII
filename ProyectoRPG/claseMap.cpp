@@ -2,16 +2,45 @@
 #include <cstdlib>
 #include <ctime>
 #include <windows.h>  // Para COORD
+#include <fstream>
+#include <iterator>
 #include "utils.h"
 
 claseMap::claseMap(int _size, int _floor)
-    : size(_size), floor(_floor), box(_size * _size, ' ') {  // Ajustar el tamaño
+    : size(_size), floor(_floor) {
+    box.resize(size * size, ' ');
 }
 
 // Constructor con 'box'
 claseMap::claseMap(int _size, int _floor, std::list<char> _box)
     : size(_size), floor(_floor), box(_box) {
 }
+
+
+
+void claseMap::save(const std::string& filename) const {
+    std::ofstream out(filename, std::ios::trunc);  // Abre el archivo y borra el contenido anterior
+    if (!out) throw std::runtime_error("Cannot open file for writing.");
+    
+    for (auto it = box.begin(); it != box.end(); ++it) {
+        out << *it;  // Escribe cada carácter en el archivo
+    }
+    out.close();
+}
+
+void claseMap::load(const std::string& filename) {
+    std::ifstream in(filename);
+    if (!in) throw std::runtime_error("Cannot open file for reading.");
+
+    box.clear();
+    char ch;
+    while (in >> std::noskipws >> ch) {  // Lee carácter por carácter sin omitir espacios en blanco
+        box.push_back(ch);
+    }
+    in.close();
+}
+
+
 
 // Implementación del método generarMapa
 void claseMap::generarMapa() {
@@ -168,4 +197,12 @@ int claseMap::getFloor(){
 }
 void claseMap::setFloor(){
     floor = floor + 1; 
-} 
+}
+void claseMap::clearMap(){
+    box.clear();
+    box.resize(100, ' ');
+}
+
+std::list<char> claseMap::getBox(){
+    return box;
+}

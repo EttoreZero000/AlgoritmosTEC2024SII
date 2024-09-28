@@ -14,17 +14,19 @@ int main() {
     int selectedOption = 0;
     hideCursor();
     // Llamar a la función menu
-    selectedOption = menu(title, options, selectedOption, consoleSize);
-    // Manejar la opción seleccionada
-    if (selectedOption == 0) {
-        verHistoria(consoleSize);
-        manejarPartidaNueva(consoleSize, prevConsoleSize, options, selectedOption);
+    while(true){
+        selectedOption=0;
+        selectedOption = menu(title, options, selectedOption, consoleSize);
+        // Manejar la opción seleccionada
+        if (selectedOption == 0) {
+            verHistoria(consoleSize);
+            manejarPartidaNueva(consoleSize, prevConsoleSize, options, selectedOption);
+        }else if(selectedOption == 2){
+            break;
+        }
     }
-    //else if (selectedOption == 1) {
-    //    break;
-    //}
     system("cls");
-    std::cout << selectedOption;
-    std::cin.get();
+    //std::cout << selectedOption;
+    //std::cin.get();
     return 0;
 }

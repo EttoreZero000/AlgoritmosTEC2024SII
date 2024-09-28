@@ -4,12 +4,130 @@
 #include <thread>     // Para sleep_for
 #include <chrono>     // Para milliseconds
 #include <fstream>    //Guardar y cargar partidas
+#include <sstream>
 #include "claseMap.h"
 #include "clases/personajesYEnemigos/padre.h"
 #include "controladorAcciones.h"
 #include "clases/personajesYEnemigos/personajesPrincipales.h"
 #include "clases/personajesYEnemigos/enemigos.h"
 #include "clases/Armamento/claseArmamento.h"
+
+
+std::list<personajesH> cargarListaAliados() {
+    std::ifstream inFile("appDeDesarrollo/crearAliados/aliados.txt");
+    std::list<personajesH> listaAliados;
+
+    if (!inFile.is_open()) {
+        std::cerr << "No se pudo abrir el archivo para leer.\n";
+        return listaAliados;  // Retorna lista vacía si falla al abrir el archivo
+    }
+
+    std::string line;
+    while (std::getline(inFile, line)) {
+        std::istringstream iss(line);
+        std::string nombre, armaNombre;
+        int vida, ataque, oro, _vidaMaxima, armaDamage;
+        bool tipoPersonaje;
+
+        // Leer los campos separados por coma
+        std::getline(iss, nombre, ',');
+        iss >> vida;
+        iss.ignore(); // Ignorar la coma
+        iss >> ataque;
+        iss.ignore(); // Ignorar la coma
+        iss >> oro;  // Leer el oro como el último valor
+        iss.ignore(); // Ignorar la coma
+        iss >> tipoPersonaje;
+        iss.ignore(); // Ignorar la coma
+        std::getline(iss, armaNombre, ','); // Leer el nombre del arma hasta la siguiente coma
+        iss >> armaDamage;
+        iss.ignore(); // Ignorar la coma
+        iss >> _vidaMaxima;  // Leer el oro como el último valor
+
+        // Crear objeto `Arma` y `enemigos`
+        Arma arma(armaNombre, armaDamage);
+        personajesH personaje(nombre, vida, ataque, tipoPersonaje, arma, oro, _vidaMaxima);
+        listaAliados.push_back(personaje);
+    }
+    inFile.close();
+    return listaAliados;
+}
+
+
+std::list<enemigos> cargarListaEnemigos() {
+    std::ifstream inFile("appDeDesarrollo/crearEnemigos/enemigos.txt");
+    std::list<enemigos> listaEnemigos;
+
+    if (!inFile.is_open()) {
+        std::cerr << "No se pudo abrir el archivo para leer.\n";
+        return listaEnemigos;  // Retorna lista vacía si falla al abrir el archivo
+    }
+
+    std::string line;
+    while (std::getline(inFile, line)) {
+        std::istringstream iss(line);
+        std::string nombre, armaNombre;
+        int vida, ataque, oro, armaDamage;
+        bool tipoPersonaje, comp;
+
+        // Leer los campos separados por coma
+        std::getline(iss, nombre, ',');
+        iss >> vida;
+        iss.ignore(); // Ignorar la coma
+        iss >> ataque;
+        iss.ignore(); // Ignorar la coma
+        iss >> tipoPersonaje;
+        iss.ignore(); // Ignorar la coma
+        std::getline(iss, armaNombre, ','); // Leer el nombre del arma hasta la siguiente coma
+        iss >> armaDamage;
+        iss.ignore(); // Ignorar la coma
+        iss >> comp;
+        iss.ignore(); // Ignorar la coma
+        iss >> oro;  // Leer el oro como el último valor
+
+        // Crear objeto `Arma` y `enemigos`
+        Arma arma(armaNombre, armaDamage);
+        enemigos enemigo(nombre, vida, ataque, tipoPersonaje, arma, comp, oro);
+        listaEnemigos.push_back(enemigo);
+    }
+
+    inFile.close();
+    return listaEnemigos;
+}
+
+// CARGAR LISTA ARMAS
+
+std::list<Arma> cargarListaArmas() {
+
+    std::ifstream inFile("appDeDesarrollo/crearArmas/armas.txt");
+    std::list<Arma> listaArmas;
+
+    if (!inFile.is_open()) {
+        std::cerr << "No se pudo abrir el archivo para leer.\n";
+        return listaArmas; // Es mejor usar return en lugar de exit.
+    }
+
+    std::string line;
+    while (std::getline(inFile, line)) {
+        std::istringstream iss(line);
+        std::string nombre;
+        int damage;
+
+        // Leer el nombre hasta la coma
+        std::getline(iss, nombre, ',');
+
+        // Leer el valor de damage
+        iss >> damage;
+
+        // Crear el objeto Arma y agregarlo a la lista
+        Arma arma(nombre, damage);
+        listaArmas.push_back(arma);
+    }
+
+    inFile.close();
+    return listaArmas;
+}
+
 
 
 // Maximizar la ventana
@@ -111,7 +229,7 @@ void printMenuArmas(const std::list<Arma> &listaArmas, std::list<Arma>::const_it
 }
 
 // Función para manejar la navegación del menú
-void manejarMenuArmas(std::list<Arma> &listaArmas, std::list<Arma>::iterator &selectedOption, bool& refresh) {
+Arma manejarMenuArmas(std::list<Arma> &listaArmas, std::list<Arma>::iterator &selectedOption, bool& refresh) {
     int input;
     auto previousOption = selectedOption; // Guardar el estado inicial
     printMenuArmas(listaArmas, selectedOption);
@@ -140,12 +258,86 @@ void manejarMenuArmas(std::list<Arma> &listaArmas, std::list<Arma>::iterator &se
         else if (input == 5) { // Presiona Enter
             // Puntero del Arma seleccionada
             Arma armaSeleccionada = *selectedOption;
+            listaArmas.erase(selectedOption);
             refresh = true;
-            break;
+            return armaSeleccionada;
         }
     }
 }
 
+void printMenuAliados(const std::list<personajesH> &listaAliados, std::list<personajesH>::const_iterator selectedOption) {
+    system("cls"); // Limpiar la pantalla
+    int PosAliado = 0;
+    for (auto it = listaAliados.begin(); it != listaAliados.end(); ++it) {
+        if (it == selectedOption) {
+            std::string aliado = ">" + it->getNombre() + "<"; // Muestra el aliado seleccionado
+            printPos(aliado, PosAliado, 0);
+        } else {
+            std::string aliado = it->getNombre(); // Muestra los demás aliados
+            printPos(aliado, PosAliado, 0);
+        }
+        PosAliado++;
+    }
+}
+
+// Función para manejar la navegación del menú de aliados
+personajesH& manejarMenuAliados(std::list<personajesH> &listaAliados, std::list<personajesH>::iterator &selectedOption) {
+    int input;
+    auto previousOption = selectedOption; // Guardar el estado inicial
+    printMenuAliados(listaAliados, selectedOption);
+
+    while (true) {
+        // Verificar si hay un cambio entre la opción anterior y la actual
+        if (previousOption != selectedOption) {
+            printMenuAliados(listaAliados, selectedOption); // Mostrar el menú solo si ha habido un cambio
+            previousOption = selectedOption; // Actualizar la opción previa
+        }
+
+        input = controladorInput(); // Capturar la entrada del usuario
+
+        if (input == 1) { // Presiona abajo
+            ++selectedOption;
+            if (selectedOption == listaAliados.end()) selectedOption = listaAliados.begin(); // Regresar al primero
+            Sleep(250);
+        }
+        else if (input == 2) { // Presiona arriba
+            if (selectedOption == listaAliados.begin()) {
+                selectedOption = listaAliados.end(); // Si está en el primero y sube, va al último
+            }
+            --selectedOption;
+            Sleep(250);
+        }
+        else if (input == 5) { // Presiona Enter
+            return *selectedOption; // Retorna el aliado seleccionado
+        }
+    }
+}
+
+void actualizarVidaMaxima(std::list<personajesH> &listaAliados) {
+    for (auto &aliado : listaAliados) { // Iterar sobre cada aliado en la lista
+        aliado.setVidaMaxima(); // Aplicar setVidaMaxima
+    }
+}
+void actualizarVida(std::list<personajesH> &listaAliados) {
+    for (auto &aliado : listaAliados) { // Iterar sobre cada aliado en la lista
+        aliado.curarVida(); // Aplicar setVidaMaxima
+    }
+}
+
+void asignarArmaAaliado(std::list<Arma> &listaArmas, std::list<personajesH> &listaAliados, bool &refresh) {
+    
+    std::list<personajesH>::iterator selectedAliado = listaAliados.begin();
+    personajesH& aliadoSeleccionado = manejarMenuAliados(listaAliados, selectedAliado);
+
+    Arma preArma = aliadoSeleccionado.getArma();
+
+    std::list<Arma>::iterator selectArma = listaArmas.begin();
+    Arma armaSeleccionada = manejarMenuArmas(listaArmas, selectArma, refresh);
+    
+    aliadoSeleccionado.setArma(armaSeleccionada);
+
+    listaArmas.push_back(preArma);
+}
 
 
 // Menú que se actualiza cuando hay un cambio de selección o de tamaño de la consola
@@ -264,28 +456,36 @@ int manejarMenu(claseMap &mapa, COORD &consoleSize, std::string (&options)[9], i
 void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string (&options)[9], int &selectedOption) {
     //Cargar aqui las armas ya creadas.
     //Cargar aqui las enemigos ya creadas.
+    std::list<Arma> listaCargadaArmas = cargarListaArmas();
+    std::list<enemigos> listaCargadaEnemigos = cargarListaEnemigos();
+    std::list<personajesH> listaCargadaAliados = cargarListaAliados();
 
     std::srand(std::time(0));
     bool viewBox = false, refresh = false, vidaCero = false;
+    int tiradas=10;
     selectedOption = 3;
     std::string accionRealizada;
 
     // Crear el mapa
     claseMap mapa1(10, 0);
-    crearMapa(mapa1, consoleSize, viewBox);
-
+    //crearMapa(mapa1, consoleSize, viewBox);
+    mapa1.load("map1.txt");
+    mapa1.setX(0);
+    mapa1.setY(0);
     // Crear arma y personajes
-    Arma arma1("Ballesta", 2);
+    //mapa1.save("map1.txt");
+    Arma arma1("Cuchillo", 2);
     std::list<personajesH> listaAliados;
-    personajesH personajePrincipal = crearPersonajePrincipal(listaAliados, "Thorfin", 3, 3, arma1);
-    //Crear lista para practica
-    Arma arma4("Ballesta", 1);
-    Arma arma2("Espada", 2);
-    Arma arma3("Palo", 3);
+    personajesH personajePrincipal = crearPersonajePrincipal(listaAliados, "Thorfinn", 3, 3, arma1);
 
-    std::list<Arma> listaArmas = {arma4, arma2, arma3};
+    std::list<Arma> listaArmas;
     // Imprimir el menú inicial
     printMenu(options, 3, selectedOption, consoleSize, 2);
+    // Print nuestro vida y cantidad de oro
+    std::string stats1 = "Vida: "+std::to_string(listaAliados.front().getVida())+" Oro: " + std::to_string(listaAliados.front().getOro());
+    printPos(stats1, 1, consoleSize.Y-10);
+    std::string stats2 = "Piso: " +std::to_string(mapa1.getFloor()) + " Tiradas: " + std::to_string(tiradas);
+    printPos(stats2, 2, consoleSize.Y-10);
 
     // Bucle para el manejo del menú
     while (true) {
@@ -294,12 +494,25 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
             refresh=false;
             mapa1.imprimirBox(consoleSize, viewBox);
             printMenu(options, 3, selectedOption, consoleSize, 2);
+            std::string stats1 = "Vida: "+std::to_string(listaAliados.front().getVida())+" Oro: " + std::to_string(listaAliados.front().getOro());
+            printPos(stats1, 1, consoleSize.Y-10);
+            std::string stats2 = "Piso: " +std::to_string(mapa1.getFloor()) + " Tiradas: " + std::to_string(tiradas);
+            printPos(stats2, 2, consoleSize.Y-10);
         }
 
         // Manejar el menú
         int opcion=manejarMenu(mapa1, consoleSize, options, selectedOption, viewBox, refresh, 3, 2);
 
         if (opcion == 3) {
+            tiradas-=1;
+            if(tiradas == -1){
+                mapa1.setFloor();
+                tiradas=10;
+                mapa1.setX(0);
+                mapa1.setY(0);
+                mapa1.clearMap();
+                mapa1.generarMapa();
+            }
             int dado1 = setDados();
             int dado2 = setDados();
 
@@ -389,77 +602,143 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
                         int porcentaje = std::rand() % 3 + 1;
                         if(porcentaje==1){
                             //Se aumenta la vida solo el personajePrincipal
-                            personajePrincipal.setVidaMaxima();
+                            actualizarVidaMaxima(listaAliados);
                             accionRealizada = "Abriste un cofre y te dio vida maxima";
                         }else if(porcentaje==2){
                             //Se cura solo el personajePrincipal
-                            personajePrincipal.curarVida();
+                            listaAliados.front().curarVida();
                             accionRealizada = "Abriste un cofre y te cura el 10%";
                         }else if(porcentaje==3){
                             //Elegir aleatoria de la lista de Armas
+                            accionRealizada = "Abriste un cofre y te obtienes un arma nueva";
+                            int randomIndex = std::rand() % listaCargadaArmas.size()+1;
+                            auto it = listaCargadaArmas.begin();
+                            std::advance(it, randomIndex);
+                            listaArmas.push_back(*it);
                         }
                     }else if (casilla == ' '){
                         accionRealizada = "Estas contemplando la vista";
                     }else if (casilla == 'E'){
-                        accionRealizada = "Accion Enemigos";
-                        enemigos e1;  // Declaración fuera de los bloques if
-                            int a = rand() % 8 + 1;
-                            if (a == 1){
-                                Arma arma10("Pedro", 10);
-                                e1 = enemigos("Enemigo", mapa1.getFloor()+1, mapa1.getFloor(), false, arma10, true, 100);
-                            } else {
-                                Arma armaVacia("Vacia", 0);
-                                e1 = enemigos("Enemigo", mapa1.getFloor()+1, mapa1.getFloor(), false, armaVacia, false, 100);
-                            }
-                            int b = rand() % 2 + 1;
-                            while(true){
-                                if (b == 1){
-                                    for(personajesH h1 : listaAliados){
-                                        e1.setPunch(h1.getPunch());
+                        // accionRealizada = "Accion Enemigos";
+                        int posX = 0;  // Variable para la posición vertical del texto
+                        //Agarrar un bicho de la lista
+                        int randomIndex = std::rand()% listaCargadaEnemigos.size();
+                        auto it = listaCargadaEnemigos.begin();
+                        std::advance(it, randomIndex);
+                        enemigos e1 = *it;
+                        e1.setDamage(mapa1.getFloor());
+                        e1.setVida(mapa1.getFloor());
+
+                        int b = rand() % 2;
+                        bool turnoEnemigo = (b == 1);
+                        while (true) {
+                            if (turnoEnemigo) {
+                                // Turno del enemigo
+                                std::list<personajesH>::iterator it = listaAliados.begin();
+                                std::advance(it, rand() % listaAliados.size());  // Enemigo elige un aliado al azar
+                                personajesH& aliadoAPegar = *it;
+                                aliadoAPegar.setPunch(e1.getPunch());
+
+                                std::string mensajeEnemigo = "El enemigo "+ e1.getNombre() +" pegó " + std::to_string(e1.getPunch()) + " a " + aliadoAPegar.getNombre();
+                                printPos(mensajeEnemigo, posX++, 0);  // Imprimir mensaje y aumentar posX para la siguiente línea
+                                Sleep(1000);
+
+                                // Comprobamos si el aliado fue derrotado
+                                if (aliadoAPegar.getVida() <= 0) {
+                                    std::string mensajeDerrotaAliado = aliadoAPegar.getNombre() + " ha sido derrotado";
+                                    printPos(mensajeDerrotaAliado, posX++, 0);
+                                    listaAliados.erase(it);  // Eliminar el aliado de la lista si su vida es <= 0
+                                    if (listaAliados.empty()) {
+                                        printPos("Todos los aliados han sido derrotados. Perdiste.", posX++, 0);
                                     }
-                                    if(e1.getVida()<=0){
-                                        std::string dañoString="Aliado(s) infligió " + std::to_string(personajePrincipal.getPunch());
-                                        printPos(dañoString, consoleSize.Y-1, 0);
-                                        break;
-                                    }
-                                    std::list<personajesH>::iterator it = listaAliados.begin();
-                                    std::advance(it, rand() % listaAliados.size());
-                                    personajesH personajeAPegar = *it;
-                                    personajeAPegar.setPunch(e1.getPunch());
-                                }else{
-                                    std::list<personajesH>::iterator it = listaAliados.begin();
-                                    std::advance(it, rand() % listaAliados.size());
-                                    personajesH personajeAPegar = *it;
-                                    personajeAPegar.setPunch(e1.getPunch());
-                                    for(personajesH h1 : listaAliados){
-                                        e1.setPunch(h1.getPunch());
-                                    }
+                                    Sleep(1000);
                                 }
-                                if(e1.getVida()<=0){
-                                    if (e1.getComp()){
-                                        listaArmas.push_back(e1.getArma());
+
+                            } else {
+                                // Turno de los aliados
+                                for (personajesH& h1 : listaAliados) {
+                                    e1.setPunch(h1.getPunch());  // Cada aliado ataca al enemigo
+                                    std::string mensajeAliado = h1.getNombre() + " pegó " + std::to_string(h1.getPunch()) + " al enemigo " + e1.getNombre();
+                                    printPos(mensajeAliado, posX++, 0);  // Imprimir mensaje de ataque aliado
+                                    Sleep(1000);
+                                }
+
+                                // Comprobamos si el enemigo fue derrotado
+                                if (e1.getVida() <= 0) {
+                                    printPos("Has derrotado al enemigo. ¡Ganaste!", posX++, 0);
+                                    if (e1.getComp()) {
+                                        listaArmas.push_back(e1.getArma());  // El enemigo deja caer su arma si la tiene
                                     }
-                                    personajePrincipal.setOro(e1.getOro());
-                                    break;
-                                }else if (personajePrincipal.getVida()<=0){
-                                    vidaCero=true;
+                                    listaAliados.front().setOro(e1.getOro());  // Recompensa en oro
+                                    Sleep(1000);
                                     break;
                                 }
                             }
 
+                            // Alternar turno
+                            turnoEnemigo = !turnoEnemigo;
+
+                            // Comprobar si el personaje principal ha sido derrotado
+                            if (personajePrincipal.getVida() <= 0) {
+                                printPos("Thorfinn murio. Fin del juego.", posX++, 0);
+                                vidaCero=true;
+                                Sleep(1000);
+                                break;
+                            }
+                        }
+                        Sleep(1000);
                     }else if (casilla == 'T'){
                         accionRealizada = "Accion Taberna";
+                        selectedOption=6;
                         printMenu(options, 6, selectedOption, consoleSize, 2);
                         while(true){
                             if (boolSize(prevConsoleSize, consoleSize) || refresh) {
-                            refresh=false;
-                            mapa1.imprimirBox(consoleSize, viewBox);
-                            printMenu(options, 6, selectedOption, consoleSize, 2);
+                                refresh=false;
+                                mapa1.imprimirBox(consoleSize, viewBox);
+                                printMenu(options, 6, selectedOption, consoleSize, 2);
                             }
-                        int opcionTaberna=manejarMenu(mapa1, consoleSize, options, selectedOption, viewBox, refresh, 6, 2);
+                            int opcionTaberna=manejarMenu(mapa1, consoleSize, options, selectedOption, viewBox, refresh, 6, 2);
+                            
+                            if(opcionTaberna==6){
+                                std::list<personajesH>::iterator selectMercenario = listaCargadaAliados.begin();
+                                personajesH selecionadoMercenario = manejarMenuAliados(listaCargadaAliados, selectMercenario);
+                                if(listaAliados.size()>3){
+                                    std::list<personajesH>::iterator selectAliado = listaAliados.begin();
+                                    personajesH selecionadoAliado = manejarMenuAliados(listaAliados, selectAliado);
+                                    listaCargadaAliados.push_back(selecionadoAliado);
+                                    listaAliados.erase(selectAliado);
+                                    listaAliados.push_back(selecionadoMercenario);
+                                }
+                                    //Lista del disco
+                                listaAliados.erase(selectMercenario);
+
+                            }else if(opcionTaberna==7 && listaAliados.front().getOro()>0){
+                                std::list<Arma>::iterator selectArma = listaArmas.begin();
+
+                                Arma evolucionarArma = manejarMenuArmas(listaArmas, selectArma, refresh);
+
+                                evolucionarArma.setDamage(rand() % listaAliados.front().getOro() + 1);
+                                listaArmas.push_back(evolucionarArma);
+                                listaAliados.front().setOro(-listaAliados.front().getOro());
+                            }
+                            if(opcionTaberna==8){
+                                selectedOption=3;
+                                refresh=true;
+                                break;
+                            }
                         }
                     }else if (casilla == 'S'){
                         accionRealizada = "Accion Save";
+                        while(true){
+                            input = controladorInput();
+                            if(input==5){
+                                mapa1.save("map1.txt");
+                                break;
+                            }else if(input==6){
+                                mapa1.load("mapa1.txt");
+                                break;
+                            }
+                        }
                     }
                     break;  // Salir del bucle
                 }
@@ -468,9 +747,15 @@ void manejarPartidaNueva(COORD &consoleSize, COORD &prevConsoleSize, std::string
             // Mensaje final de la posición del personaje
         }
         if (opcion == 4) {
-            std::list<Arma>::iterator selectArma = listaArmas.begin();
-            //Posiblemente cambiar para que nos devuelva el arma
-            manejarMenuArmas(listaArmas, selectArma, refresh);
+            asignarArmaAaliado(listaArmas, listaAliados, refresh);
+        }else if (opcion == 5){
+            //Salir al menu
+            break;
+        }
+
+        if(vidaCero){
+            //Creo que sale al menu
+            break;
         }
 
         printPos(accionRealizada, 0, 0);

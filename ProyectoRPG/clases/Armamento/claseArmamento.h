@@ -6,19 +6,18 @@
 
 class Arma {
 public:
-    int damage;
     std::string nombre;
+    int damage;
 
-    // Constructor completo
     Arma();
     Arma(const std::string& nombre, int damage);
-
-    //Métodos varios
-    std::string getNombre();
+    
+    std::string getNombre() const;
     int getDamage();
+    void setDamage(int damage);
 
     void guardar(std::ofstream& out);
-    void cargar(std::ifstream& in);
-
+    void cargar(std::istream& in);
 };
+
 #endif // ARMAMENTO_H

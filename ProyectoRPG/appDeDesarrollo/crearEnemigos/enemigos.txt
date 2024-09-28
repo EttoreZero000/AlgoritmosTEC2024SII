@@ -1,0 +1,7 @@
+Zombie,1,0,0,Vacío,0,0,5
+Esqueleto,1,0,0Vacío,0,0,7
+KKarlos,1,0,0,Vacío,0,0,2
+Venezolano,1,0,0Vacío,0,1,0
+Venezolano,1,0,0Vacío,0,0,0
+Marco,1,0,0,Vacío,0,0,10
+Luvoria,10,0,0,Vacío,0,0,100000

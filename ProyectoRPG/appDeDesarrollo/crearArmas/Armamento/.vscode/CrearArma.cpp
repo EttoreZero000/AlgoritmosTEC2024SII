@@ -14,7 +14,7 @@ int main() {
     Arma arma(nombre, damage);  // Creando el objeto arma con los datos ingresados
 
     // Guardando los datos en un archivo en modo binario
-    std::ofstream archivo("armas.txt", std::ios::binary | std::ios::app);
+    std::ofstream archivo("armas.bin", std::ios::binary | std::ios::app);
     if (archivo.is_open()) {
         arma.guardar(archivo);  // Usando el método guardar definido en la clase Arma
         archivo.close();

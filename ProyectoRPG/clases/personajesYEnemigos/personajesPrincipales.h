@@ -15,13 +15,16 @@ public:
     // Métodos
     int getPunch();
     void setVidaMaxima();
-    int getVida();
+    int getVida() const;
     void setPunch(int damage);
     void setOro(int oro);
+    int getOro() const;
     Arma getArma();
     void setArma(Arma arma);
-    
+    std::string getNombre() const;
     void curarVida();
 };
 
 #endif // PERSONAJEPRINCIPAL_H
+
+

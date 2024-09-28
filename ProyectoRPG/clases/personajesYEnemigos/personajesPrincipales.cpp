@@ -11,19 +11,22 @@ personajesH::personajesH(std::string nombre, int vida, int ataque, bool tipoPers
 int personajesH::getPunch() {
     return arma.getDamage() + ataque;
 }
-int personajesH::getVida(){
+int personajesH::getVida() const{
     return vida;
 }
 void personajesH::setVidaMaxima(){
-    vidaMaxima+=1;
     vida+=1;
+    vidaMaxima+=1;
 }
 
 void personajesH::setPunch(int damage) {
-    vida=vida-damage;
+    vida-=damage;
 }
 void personajesH::setOro(int _oro){
-    oro=oro+_oro;
+    oro+=_oro;
+}
+int personajesH::getOro() const{
+    return oro;
 }
 Arma personajesH::getArma(){
     return arma;
@@ -33,5 +36,19 @@ void personajesH::setArma(Arma _arma){
 }
 
 void personajesH::curarVida(){
-    vida+=(vida*10)/100;
+    if ((vidaMaxima*10)/100>0){
+        if(vida+(vidaMaxima*10)/100>vidaMaxima){
+            vida=vidaMaxima;
+        }else{
+            vida+=(vidaMaxima*10)/100;
+        }
+    }else {
+        if(vida<vidaMaxima){
+            vida+=1;
+        }
+    }
+}
+
+std::string personajesH::getNombre() const{
+    return nombre;
 }

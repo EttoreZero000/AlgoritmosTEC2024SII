@@ -1,51 +1,68 @@
-#include <iostream>
-#include <fstream>
-#include "../Armamento/claseArmamento.h"
-#include "enemigos.h"
-#include "personajesPrincipales.h"
-
-// Asumiendo que clase Arma está adecuadamente definida
-// Asumiendo que padrePersonajes está adecuadamente definida y tiene un constructor adecuado
-
-// Definiciones previas de enemigos.h y claseArmamento.h son necesarias aquí.
+#include "../../clases/Armamento/claseArmamento.h"
+#include "../../clases/personajesYEnemigos/enemigos.h"
+#include <vector>
+#include <sstream>  // Asegúrate de incluir esto para istringstream
+#include <windows.h>
 
 int main() {
-    std::string nombre;
+    SetConsoleOutputCP(CP_UTF8);
+    std::string nombreEnemigo;
     int vida, ataque, oro;
     bool tipoPersonaje, comp;
-    std::string nombreArma;
-    int danioArma; // Asumiendo que estas son las propiedades de la clase Arma
 
-    std::cout << "Ingrese nombre del enemigo: ";
-    std::getline(std::cin, nombre);
+    std::cout << "Ingrese el nombre del enemigo: ";
+    std::getline(std::cin, nombreEnemigo);
     std::cout << "Ingrese vida del enemigo: ";
     std::cin >> vida;
     std::cout << "Ingrese ataque del enemigo: ";
     std::cin >> ataque;
-    std::cout << "Es un tipo de personaje especial (0 no, 1 sí): ";
-    std::cin >> tipoPersonaje;
-    std::cin.ignore(); // Limpiar buffer después de cin a bool
-    std::cout << "Ingrese nombre de la arma: ";
-    std::getline(std::cin, nombreArma);
-    std::cout << "Ingrese daño de la arma: ";
-    std::cin >> danioArma;
-    std::cout << "Tiene compañía (0 no, 1 sí): ";
-    std::cin >> comp;
+
+    tipoPersonaje = 0;
+
+    srand(static_cast<unsigned int>(time(0)));
+    int probabilidad = rand() % 100;
+    comp = (probabilidad < 12);
+
+    std::cout << "Tiene arma (0 para no, 1 para sí): " << comp << std::endl;
     std::cout << "Ingrese oro del enemigo: ";
     std::cin >> oro;
 
-    Arma arma(nombreArma, danioArma);  // Asumiendo constructor de Arma
-    enemigos enemigo(nombre, vida, ataque, tipoPersonaje, arma, comp, oro);
+    Arma armaSeleccionada("Vacío", 0);  // Default empty weapon
 
-    // Ahora, escribimos los detalles en un archivo
-    std::ofstream archivo("enemigos.txt", std::ios::app); // Abre en modo append
-    if (archivo.is_open()) {
-        archivo << nombre << "," << vida << "," << ataque << "," << tipoPersonaje << ","
-                << nombreArma << "," << danioArma << "," << comp << "," << oro << "\n";
-        archivo.close();
-        std::cout << "Datos guardados correctamente.\n";
+    // Load weapons from the file if comp is true
+    if (comp) {
+        std::vector<Arma> armas;
+        std::ifstream file("../crearArmas/armas.txt");
+
+        if (file.is_open()) {
+            std::string line;
+            while (std::getline(file, line)) {
+                std::istringstream iss(line);
+                Arma arma;
+                arma.cargar(iss);
+                armas.push_back(arma);
+            }
+            file.close();
+        }
+
+        if (!armas.empty()) {
+            int index = rand() % armas.size();
+            armaSeleccionada = armas[index];
+        } else {
+            std::cerr << "No se cargaron armas desde el archivo.\n";
+        }
+    }
+
+    // Save the enemy data to a file
+    std::ofstream outFile("enemigos.txt", std::ios::app);  // Append mode
+    if (outFile.is_open()) {
+        outFile << std::endl << nombreEnemigo << "," << vida << "," << ataque
+                << "," << 0 << "," << armaSeleccionada.getNombre() << "," << armaSeleccionada.getDamage() << "," << comp 
+                << "," << oro;
+        outFile.close();
+        std::cout << "Datos del enemigo guardados correctamente.\n";
     } else {
-        std::cout << "No se pudo abrir el archivo.\n";
+        std::cerr << "No se pudo abrir el archivo 'enemigos.txt' para escribir.\n";
     }
 
     return 0;

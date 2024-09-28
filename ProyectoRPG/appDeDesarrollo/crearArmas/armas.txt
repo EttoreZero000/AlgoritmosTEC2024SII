@@ -1,0 +1,10 @@
+Varita que cura,-15
+Espada,3
+Palo,1
+Arco,2
+Martillo,4
+Varita,2
+Varita de fuego,3
+Cuchillo,2
+Mesa,1
+Antorcha,1
